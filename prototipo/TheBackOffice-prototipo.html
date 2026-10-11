@@ -1,0 +1,1019 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>The Back Office</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Figtree:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+/* Layout: guion de prueba a la izquierda + celular a la derecha en escritorio; en el teléfono, solo la app a pantalla completa. */
+:root {
+  --bg: #E6E9F0;
+  --paper: #F6F7FA;
+  --card: #FFFFFF;
+  --ink: #131A2C;
+  --muted: #5A6377;
+  --line: #DADFE8;
+  --accent: #2741C2;
+  --accent-ink: #FFFFFF;
+  --accent-soft: #E3E8FB;
+  --head: #17203A;
+  --head-ink: #F3F5FB;
+  --head-muted: #A9B3CC;
+  --frame: #1B2233;
+  --ok: #1D7549;
+  --ok-soft: #E0F2E8;
+  --warn: #9A5600;
+  --warn-soft: #FCEFD9;
+  --bad: #B0261E;
+  --bad-soft: #FBE5E2;
+  --shadow: 0 30px 60px -30px rgba(19, 26, 44, .45);
+  --f-display: "Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --f-body: "Figtree", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0A0D15; --paper: #10151F; --card: #171E2D; --ink: #E7EBF3; --muted: #98A2B6; --line: #263048;
+    --accent: #8FA3FF; --accent-ink: #0B0F1A; --accent-soft: #1D2650; --head: #0B101C; --head-ink: #E7EBF3; --head-muted: #8A95AD;
+    --frame: #2A3247; --ok: #62D39B; --ok-soft: #12301F; --warn: #F1B661; --warn-soft: #33260F; --bad: #FF8F85; --bad-soft: #3A1714;
+    --shadow: 0 30px 60px -30px rgba(0, 0, 0, .8);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0A0D15; --paper: #10151F; --card: #171E2D; --ink: #E7EBF3; --muted: #98A2B6; --line: #263048;
+  --accent: #8FA3FF; --accent-ink: #0B0F1A; --accent-soft: #1D2650; --head: #0B101C; --head-ink: #E7EBF3; --head-muted: #8A95AD;
+  --frame: #2A3247; --ok: #62D39B; --ok-soft: #12301F; --warn: #F1B661; --warn-soft: #33260F; --bad: #FF8F85; --bad-soft: #3A1714;
+  --shadow: 0 30px 60px -30px rgba(0, 0, 0, .8);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { height: 100%; }
+body { min-height: 100%; background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 15px; line-height: 1.45; }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+h1, h2, h3 { text-wrap: balance; margin: 0; }
+p { margin: 0; }
+.mono { font-family: var(--f-mono); font-variant-numeric: tabular-nums; }
+
+/* ---------- escenario ---------- */
+.stage { display: flex; justify-content: center; align-items: center; gap: 56px; min-height: 100vh; padding-block: 32px; padding-inline: 24px; }
+.guide { width: 340px; flex: none; display: flex; flex-direction: column; gap: 20px; }
+.guide .brandline { font-family: var(--f-mono); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.guide h1 { font-family: var(--f-display); font-weight: 800; font-size: 34px; line-height: 1.02; letter-spacing: -.02em; }
+.guide .lede { color: var(--muted); font-size: 15px; }
+.steps { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; counter-reset: s; }
+.steps li { counter-increment: s; display: grid; grid-template-columns: 28px 1fr auto; gap: 10px; align-items: center; padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--card); }
+.steps li::before { content: counter(s); font-family: var(--f-mono); font-size: 13px; width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+.steps li.here { border-color: var(--accent); }
+.steps li span { font-size: 14px; }
+.steps li small { display: block; color: var(--muted); font-size: 12px; }
+.linkbtn { background: none; border: 0; padding: 4px 6px; color: var(--accent); font-weight: 600; font-size: 13px; border-radius: 6px; }
+.guide .note { font-size: 12.5px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 14px; }
+.guide .row { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.device { width: 392px; height: min(830px, calc(100vh - 64px)); min-height: 640px; border-radius: 46px; border: 11px solid var(--frame); background: var(--paper); overflow: hidden; box-shadow: var(--shadow); flex: none; position: relative; }
+.app { height: 100%; display: flex; flex-direction: column; position: relative; }
+
+@media (max-width: 899px) {
+  html, body { height: 100%; }
+  .stage { display: block; min-height: 0; height: 100%; padding: 0; }
+  .guide { display: none; }
+  .device { width: 100%; height: 100%; min-height: 0; border: 0; border-radius: 0; box-shadow: none; }
+}
+
+/* ---------- cabecera ---------- */
+.top { background: var(--head); color: var(--head-ink); padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 10px; flex: none; }
+.device .top { padding-top: 22px; }
+.top-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.logo { display: flex; align-items: center; gap: 8px; white-space: nowrap; font-family: var(--f-mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--head-muted); }
+.logo b { width: 18px; height: 18px; border-radius: 5px; border: 2px solid var(--head-ink); display: inline-block; position: relative; }
+.logo b::after { content: ""; position: absolute; left: 3px; top: 1px; width: 5px; height: 9px; border-right: 2px solid var(--head-ink); border-bottom: 2px solid var(--head-ink); transform: rotate(40deg); }
+.top h2 { font-family: var(--f-display); font-weight: 800; font-size: 22px; letter-spacing: -.01em; line-height: 1.1; }
+.top .sub { font-size: 12.5px; color: var(--head-muted); }
+.viewas { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--head-muted); white-space: nowrap; }
+.viewas select { background: transparent; border: 1px solid color-mix(in srgb, var(--head-ink) 30%, transparent); border-radius: 999px; padding: 4px 10px; color: var(--head-ink); font-size: 12.5px; font-weight: 600; max-width: 132px; }
+.viewas select option { color: #131A2C; background: #FFFFFF; }
+.guidebtn { display: none; background: transparent; border: 1px solid color-mix(in srgb, var(--head-ink) 30%, transparent); color: var(--head-ink); border-radius: 999px; font-size: 12px; padding: 4px 10px; font-weight: 600; }
+@media (max-width: 899px) { .guidebtn { display: inline-block; } .viewas label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); } .viewas select { max-width: 124px; } .logo { font-size: 10.5px; } }
+
+/* ---------- cuerpo ---------- */
+.scroll { flex: 1; overflow-y: auto; overscroll-behavior: contain; padding: 16px 16px 24px; display: flex; flex-direction: column; gap: 18px; }
+.sec { display: flex; flex-direction: column; gap: 10px; }
+.sec-h { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+.sec-h h3 { font-size: 13px; letter-spacing: .08em; text-transform: uppercase; font-weight: 700; }
+.sec-h small { color: var(--muted); font-size: 12px; }
+.muted { color: var(--muted); }
+.small { font-size: 12.5px; }
+
+.kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.kpi { border: 1px solid var(--line); background: var(--card); border-radius: 14px; padding: 10px 10px 12px; text-align: left; display: flex; flex-direction: column; gap: 2px; }
+.kpi .n { font-family: var(--f-display); font-weight: 800; font-size: 30px; line-height: 1; }
+.kpi .l { font-size: 12px; color: var(--muted); line-height: 1.25; }
+.kpi.ok .n { color: var(--ok); }
+.kpi.warn { background: var(--warn-soft); border-color: transparent; }
+.kpi.warn .n { color: var(--warn); }
+.kpi.bad .n { color: var(--bad); }
+
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+.card.warn { border-color: color-mix(in srgb, var(--warn) 45%, var(--line)); }
+.card.bad { border-color: color-mix(in srgb, var(--bad) 40%, var(--line)); }
+.task-top { display: flex; justify-content: space-between; gap: 10px; align-items: flex-start; }
+.task-top > div { min-width: 0; }
+.folio { font-family: var(--f-mono); font-size: 11.5px; color: var(--muted); letter-spacing: .03em; }
+.task-title { font-weight: 700; font-size: 15.5px; line-height: 1.3; }
+.amount { font-family: var(--f-mono); font-weight: 600; font-size: 15px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.meta { display: flex; flex-wrap: wrap; gap: 6px 12px; font-size: 12.5px; color: var(--muted); }
+.reason { font-size: 13px; padding: 8px 10px; border-radius: 10px; }
+.reason.warn { background: var(--warn-soft); color: var(--warn); }
+.reason.bad { background: var(--bad-soft); color: var(--bad); }
+.reason.ok { background: var(--ok-soft); color: var(--ok); }
+.reason.info { background: var(--accent-soft); color: var(--accent); }
+
+.pill { display: inline-flex; align-items: center; gap: 5px; font-size: 11.5px; font-weight: 700; padding: 3px 9px; border-radius: 999px; white-space: nowrap; letter-spacing: .02em; }
+.pill.ok { background: var(--ok-soft); color: var(--ok); }
+.pill.warn { background: var(--warn-soft); color: var(--warn); }
+.pill.bad { background: var(--bad-soft); color: var(--bad); }
+.pill.idle { background: var(--accent-soft); color: var(--accent); }
+.pill.gray { background: var(--paper); color: var(--muted); border: 1px solid var(--line); }
+
+.btns { display: flex; gap: 8px; flex-wrap: wrap; }
+.btn { border-radius: 12px; padding: 10px 14px; font-weight: 700; font-size: 14px; border: 1px solid var(--line); background: var(--card); color: var(--ink); flex: 1; min-width: 0; }
+.btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.btn.okb { background: var(--ok); color: var(--card); border-color: var(--ok); }
+.btn.ghost { background: transparent; }
+.btn.badb { color: var(--bad); border-color: color-mix(in srgb, var(--bad) 40%, var(--line)); }
+.btn.sm { padding: 7px 10px; font-size: 13px; border-radius: 10px; }
+.btn.wide { flex-basis: 100%; }
+.btn:disabled { opacity: .5; cursor: default; }
+
+.list { background: var(--card); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; }
+.lrow { display: grid; grid-template-columns: 22px 1fr auto; gap: 10px; align-items: center; padding: 11px 14px; border: 0; border-top: 1px solid var(--line); background: transparent; width: 100%; text-align: left; }
+.lrow:first-child { border-top: 0; }
+.lrow .t { font-size: 14px; font-weight: 600; line-height: 1.3; min-width: 0; }
+.lrow .t small { display: block; font-weight: 400; color: var(--muted); font-size: 12px; }
+.tick { width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; font-size: 12px; font-weight: 800; }
+.tick.ok { background: var(--ok-soft); color: var(--ok); }
+.tick.bad { background: var(--bad-soft); color: var(--bad); }
+.tick.warn { background: var(--warn-soft); color: var(--warn); }
+.tick.idle { background: var(--accent-soft); color: var(--accent); }
+
+.banner { border-radius: 14px; padding: 12px 14px; font-size: 13.5px; display: flex; gap: 10px; align-items: flex-start; }
+.banner.info { background: var(--accent-soft); color: var(--ink); }
+.banner b { font-weight: 700; }
+
+.cta { background: var(--head); color: var(--head-ink); border-radius: 18px; padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+.cta h3 { font-family: var(--f-display); font-weight: 800; font-size: 20px; line-height: 1.1; }
+.cta p { color: var(--head-muted); font-size: 13.5px; }
+.cta .btn { background: var(--head-ink); color: var(--head); border-color: var(--head-ink); }
+
+.chips { display: flex; gap: 6px; flex-wrap: wrap; }
+.chip { border: 1px solid var(--line); background: var(--card); border-radius: 999px; padding: 5px 11px; font-size: 12.5px; font-weight: 600; color: var(--muted); }
+.chip[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.filters { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 2px; scrollbar-width: none; }
+.filters .chip { flex: none; }
+
+.back { align-self: flex-start; background: none; border: 0; padding: 0; color: var(--accent); font-weight: 700; font-size: 14px; }
+.detail-h { display: flex; flex-direction: column; gap: 6px; }
+.detail-h h1 { font-family: var(--f-display); font-weight: 800; font-size: 24px; line-height: 1.1; letter-spacing: -.01em; }
+.bigamount { font-family: var(--f-mono); font-size: 26px; font-weight: 600; font-variant-numeric: tabular-nums; }
+
+.checks { display: flex; flex-direction: column; }
+.check { display: grid; grid-template-columns: 22px 1fr; gap: 10px; padding: 9px 0; border-top: 1px dashed var(--line); font-size: 14px; }
+.check:first-child { border-top: 0; }
+.check small { display: block; color: var(--bad); font-size: 12.5px; }
+
+.qty { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+.qty th { text-align: left; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); font-weight: 700; padding: 6px 4px; border-bottom: 1px solid var(--line); }
+.qty td { padding: 8px 4px; border-bottom: 1px dashed var(--line); vertical-align: middle; }
+.qty td.num, .qty th.num { text-align: right; font-family: var(--f-mono); font-variant-numeric: tabular-nums; }
+.qty input { width: 62px; text-align: right; font-family: var(--f-mono); padding: 6px 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--paper); }
+.diff-ok { color: var(--ok); font-weight: 600; }
+.diff-bad { color: var(--bad); font-weight: 600; }
+
+.timeline { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.timeline li { display: grid; grid-template-columns: 46px 1fr; gap: 10px; padding: 7px 0; font-size: 13px; border-top: 1px dashed var(--line); }
+.timeline li:first-child { border-top: 0; }
+.timeline .h { font-family: var(--f-mono); color: var(--muted); font-size: 12px; padding-top: 1px; }
+.timeline b { font-weight: 700; }
+
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field label, .flabel { font-size: 12.5px; font-weight: 700; color: var(--muted); letter-spacing: .02em; }
+.field input, .field select, .field textarea { border: 1px solid var(--line); border-radius: 12px; padding: 11px 12px; background: var(--card); width: 100%; }
+.field textarea { min-height: 84px; resize: vertical; }
+.field .hint { font-size: 12px; color: var(--muted); }
+
+.toggle-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; font-size: 14px; }
+.switch { position: relative; width: 46px; height: 28px; border-radius: 999px; border: 0; background: var(--line); flex: none; padding: 0; transition: background .15s; }
+.switch::after { content: ""; position: absolute; top: 3px; left: 3px; width: 22px; height: 22px; border-radius: 50%; background: var(--card); box-shadow: 0 1px 2px rgba(0,0,0,.25); transition: transform .15s; }
+.switch[aria-checked="true"] { background: var(--ok); }
+.switch[aria-checked="true"]::after { transform: translateX(18px); }
+
+.person { display: grid; grid-template-columns: 40px 1fr; gap: 12px; align-items: start; }
+.avatar { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; font-weight: 800; font-size: 14px; background: var(--accent-soft); color: var(--accent); font-family: var(--f-display); }
+.avatar.sm { width: 26px; height: 26px; border-radius: 8px; font-size: 11px; }
+.avatar.off { background: var(--paper); color: var(--muted); border: 1px dashed var(--line); }
+
+.rangewrap { display: flex; flex-direction: column; gap: 8px; }
+.rangewrap input[type=range] { width: 100%; accent-color: var(--accent); }
+.limit-v { font-family: var(--f-display); font-weight: 800; font-size: 34px; line-height: 1; font-variant-numeric: tabular-nums; }
+
+.pauta-items { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.pauta-items li { display: grid; grid-template-columns: 18px 1fr auto; gap: 8px; align-items: center; font-size: 13.5px; }
+.pauta-items .box { width: 16px; height: 16px; border: 2px solid var(--muted); border-radius: 4px; }
+.kind { font-family: var(--f-mono); font-size: 10.5px; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; }
+.x { background: none; border: 0; color: var(--muted); font-size: 16px; padding: 0 4px; line-height: 1; }
+.addrow { display: flex; gap: 6px; }
+.addrow input { flex: 1; min-width: 0; border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; background: var(--paper); font-size: 13.5px; }
+
+/* tareas del trabajador */
+.todo { display: grid; grid-template-columns: 26px 1fr; gap: 10px; align-items: start; padding: 12px 0; border-top: 1px dashed var(--line); width: 100%; background: none; border-left: 0; border-right: 0; border-bottom: 0; text-align: left; font-size: 14.5px; }
+.todo:first-child { border-top: 0; }
+.cbox { width: 24px; height: 24px; border-radius: 7px; border: 2px solid var(--muted); display: grid; place-items: center; font-weight: 800; font-size: 14px; color: transparent; }
+.todo[aria-checked="true"] .cbox { background: var(--ok); border-color: var(--ok); color: var(--card); }
+.photo { display: flex; align-items: center; gap: 10px; margin-top: 6px; }
+.thumb { width: 54px; height: 40px; border-radius: 8px; background: repeating-linear-gradient(135deg, var(--accent-soft) 0 6px, var(--paper) 6px 12px); border: 1px solid var(--line); flex: none; }
+
+/* timbre */
+.stampwrap { display: grid; place-items: center; padding: 24px 0 8px; }
+.stamp { display: inline-flex; flex-direction: column; align-items: center; font-family: var(--f-mono); font-weight: 600; letter-spacing: .14em; text-transform: uppercase; border: 3px solid currentColor; border-radius: 12px; padding: 10px 20px; transform: rotate(-6deg); font-size: 24px; line-height: 1.1; box-shadow: inset 0 0 0 2px var(--card), inset 0 0 0 4px currentColor; }
+.stamp small { font-size: 11px; letter-spacing: .12em; margin-top: 4px; }
+.stamp.ok { color: var(--ok); } .stamp.warn { color: var(--warn); } .stamp.bad { color: var(--bad); }
+.stamp.anim { animation: thump .5s cubic-bezier(.2, 1.5, .4, 1) both; }
+@keyframes thump { from { transform: rotate(-6deg) scale(1.9); opacity: 0; } to { transform: rotate(-6deg) scale(1); opacity: 1; } }
+.stamp-mini { font-family: var(--f-mono); font-size: 10.5px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; border: 2px solid currentColor; border-radius: 6px; padding: 2px 6px; transform: rotate(-4deg); display: inline-block; }
+.stamp-mini.ok { color: var(--ok); } .stamp-mini.warn { color: var(--warn); } .stamp-mini.bad { color: var(--bad); } .stamp-mini.idle { color: var(--accent); }
+
+/* onboarding */
+.welcome { display: flex; flex-direction: column; gap: 18px; padding-top: 8px; }
+.welcome h1 { font-family: var(--f-display); font-weight: 800; font-size: 34px; line-height: 1.02; letter-spacing: -.02em; }
+.welcome .lede { font-size: 16px; color: var(--muted); }
+.progress { display: flex; gap: 6px; }
+.progress i { flex: 1; height: 4px; border-radius: 4px; background: var(--line); }
+.progress i.on { background: var(--accent); }
+.howto { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; counter-reset: h; }
+.howto li { counter-increment: h; display: grid; grid-template-columns: 30px 1fr; gap: 10px; font-size: 14px; }
+.howto li::before { content: counter(h); width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--accent); color: var(--accent); display: grid; place-items: center; font-weight: 700; font-family: var(--f-mono); font-size: 13px; }
+.howto b { display: block; }
+
+.tabbar { display: grid; border-top: 1px solid var(--line); background: var(--card); flex: none; padding-bottom: env(safe-area-inset-bottom, 0px); }
+.device .tabbar { padding-bottom: 14px; }
+.tab { background: none; border: 0; padding: 10px 4px 8px; display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 11.5px; font-weight: 600; color: var(--muted); position: relative; }
+.tab svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.tab[aria-current="page"] { color: var(--accent); }
+.tab .dot { position: absolute; top: 6px; left: calc(50% + 8px); min-width: 16px; height: 16px; padding: 0 4px; border-radius: 999px; background: var(--warn); color: var(--card); font-size: 10px; font-weight: 800; display: grid; place-items: center; }
+
+.toast { pointer-events: none; position: absolute; left: 16px; right: 16px; bottom: 84px; background: var(--ink); color: var(--paper); border-radius: 12px; padding: 11px 14px; font-size: 13.5px; font-weight: 600; box-shadow: var(--shadow); z-index: 5; }
+.toast.in { animation: up .25s ease-out both; }
+@keyframes up { from { transform: translateY(10px); opacity: 0; } to { transform: none; opacity: 1; } }
+
+.sheet { position: fixed; inset: 0; background: rgba(10, 13, 21, .55); z-index: 20; display: flex; align-items: flex-end; }
+.sheet-in { background: var(--paper); width: 100%; max-height: 88%; overflow-y: auto; border-radius: 20px 20px 0 0; padding: 20px 16px calc(24px + env(safe-area-inset-bottom, 0px)); display: flex; flex-direction: column; gap: 16px; }
+.sheet-in .guide { display: flex; width: 100%; }
+
+.empty { text-align: center; color: var(--muted); font-size: 13.5px; padding: 18px 8px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .stamp.anim, .toast.in { animation: none; }
+  .switch, .switch::after { transition: none; }
+}
+</style>
+</head>
+<body>
+
+<div class="stage">
+  <aside class="guide" id="guide" aria-label="Guion de la prueba de uso"></aside>
+  <div class="device"><div class="app" id="app"></div></div>
+</div>
+<div class="sheet" id="sheet" hidden><div class="sheet-in" id="sheet-in"></div></div>
+
+<script>
+(() => {
+  'use strict';
+
+  /* ------------------------------------------------------------------
+     Datos de ejemplo. Empresa, personas, montos y proveedores son
+     inventados para el prototipo; no son datos de clientes.
+  ------------------------------------------------------------------ */
+  const PAUTAS = () => ({
+    recepcion: { nombre: 'Recepción de mercadería', siempre: false, items: [
+      { t: 'Cantidades recibidas coinciden con la orden de compra', k: 'cantidades' },
+      { t: 'Foto de la guía de despacho', k: 'foto' },
+      { t: 'Productos sin daños visibles', k: 'check' } ] },
+    factura: { nombre: 'Factura a cliente', siempre: false, items: [
+      { t: 'Orden de compra del cliente adjunta', k: 'foto' },
+      { t: 'Monto coincide con la cotización aprobada', k: 'check' },
+      { t: 'RUT y razón social verificados', k: 'check' } ] },
+    pago: { nombre: 'Pago a proveedor', siempre: false, items: [
+      { t: 'Factura del proveedor registrada', k: 'check' },
+      { t: 'Monto coincide con la orden de compra', k: 'check' },
+      { t: 'Mercadería recibida conforme', k: 'check' } ] },
+    entrega: { nombre: 'Entrega de trabajo terminado', siempre: false, items: [
+      { t: 'Puntos acordados con el cliente cumplidos', k: 'check' },
+      { t: 'Foto del trabajo terminado', k: 'foto' },
+      { t: 'Cliente firmó la recepción', k: 'check' } ] },
+    compra: { nombre: 'Compra de insumos', siempre: false, items: [
+      { t: 'Cotización de al menos 2 proveedores', k: 'check' },
+      { t: 'Insumo está en la lista de compras del mes', k: 'check' } ] },
+    impuestos: { nombre: 'Impuestos y temas legales', siempre: true, items: [
+      { t: 'Libro de compras y ventas cuadrado', k: 'check' },
+      { t: 'Borrador revisado por el contador', k: 'check' } ] },
+  });
+
+  const LINEAS_OC318 = [
+    { p: 'Plancha de acero 3 mm', u: 'un', pedido: 10 },
+    { p: 'Perfil L 40×40×3', u: 'un', pedido: 24 },
+    { p: 'Pernos M10, caja de 100', u: 'caja', pedido: 6 },
+  ];
+
+  function seed() {
+    const pautas = PAUTAS();
+    const allOk = tipo => pautas[tipo].items.map(i => ({ t: i.t, k: i.k, ok: true }));
+    const closed = (id, tipo, titulo, monto, who, hora) => ({
+      id, tipo, titulo, monto, asignado: who, estado: 'cerrada', cierre: 'pauta', checks: allOk(tipo),
+      historial: [ { h: hora, txt: `<b>${nameOf(who)}</b> completó la pauta` }, { h: hora, txt: 'Pauta cumplida y bajo el límite: <b>se cerró sola</b>' } ],
+    });
+    return {
+      screen: 'bienvenida', param: null, prev: [],
+      viewer: 'jorge', filter: 'todas', onb: 1, clock: 10 * 60 + 4,
+      empresa: { nombre: 'Taller Pérez', rubro: 'Taller de metalmecánica', personas: 4, limite: 200000 },
+      people: [
+        { id: 'jorge', nombre: 'Jorge Pérez', rol: 'Dueño', owner: true, tipos: [], disponible: true },
+        { id: 'carla', nombre: 'Carla Muñoz', rol: 'Asistente administrativa', tipos: ['factura', 'pago', 'impuestos'], reemplazo: 'luis', disponible: true },
+        { id: 'luis', nombre: 'Luis Rojas', rol: 'Encargado de bodega', tipos: ['recepcion', 'compra'], reemplazo: 'carla', disponible: true },
+        { id: 'pedro', nombre: 'Pedro Soto', rol: 'Jefe de taller', tipos: ['entrega'], reemplazo: 'luis', disponible: true },
+      ],
+      pautas,
+      tasks: [
+        closed('T-0138', 'recepcion', 'Recepción guía 4521 · Ferretería Austral', 48300, 'luis', '08:41'),
+        closed('T-0139', 'pago', 'Pago gas industrial · Indura', 64990, 'carla', '08:52'),
+        closed('T-0140', 'factura', 'Factura a Transportes Vidal', 132000, 'carla', '09:03'),
+        closed('T-0141', 'entrega', 'Entrega reparación de portón · Agrícola Riquelme', 180000, 'pedro', '09:10'),
+        closed('T-0143', 'compra', 'Compra de guantes y lentes de seguridad', 29900, 'luis', '09:24'),
+        closed('T-0144', 'recepcion', 'Recepción de electrodos · Soldex', 37800, 'luis', '09:31'),
+        closed('T-0146', 'factura', 'Factura a Maestranza Lillo', 156000, 'carla', '09:47'),
+        { id: 'T-0147', tipo: 'factura', titulo: 'Factura a Constructora Soto', monto: 95000, asignado: 'carla', estado: 'devuelta',
+          motivo: 'Falta la orden de compra del cliente',
+          checks: [ { t: 'Orden de compra del cliente adjunta', k: 'foto', ok: false }, { t: 'Monto coincide con la cotización aprobada', k: 'check', ok: true }, { t: 'RUT y razón social verificados', k: 'check', ok: true } ],
+          historial: [ { h: '09:50', txt: '<b>Carla Muñoz</b> envió la factura' }, { h: '09:50', txt: 'No pasó la pauta: <b>falta la orden de compra</b>. Volvió a Carla' } ] },
+        { id: 'T-0148', tipo: 'pago', titulo: 'Pago a proveedor · Aceros del Sur', monto: 850000, asignado: 'carla', estado: 'aprobacion',
+          motivo: 'Monto sobre tu límite de $200.000', checks: allOk('pago'),
+          historial: [ { h: '09:55', txt: '<b>Carla Muñoz</b> completó la pauta' }, { h: '09:55', txt: 'Pauta cumplida. Monto sobre el límite: <b>espera tu aprobación</b>' } ] },
+        { id: 'T-0149', tipo: 'compra', titulo: 'Compra de pernos y discos de corte', monto: 320000, asignado: 'luis', estado: 'aprobacion',
+          motivo: 'Monto sobre tu límite de $200.000', checks: allOk('compra'),
+          historial: [ { h: '10:02', txt: '<b>Luis Rojas</b> completó la pauta' }, { h: '10:02', txt: 'Pauta cumplida. Monto sobre el límite: <b>espera tu aprobación</b>' } ] },
+        { id: 'T-0150', tipo: 'recepcion', titulo: 'Recepción OC 318 · Aceros del Sur', monto: 176400, asignado: 'luis', estado: 'pendiente', lineas: LINEAS_OC318.map(l => ({ ...l })),
+          historial: [ { h: '08:30', txt: 'Creada desde la orden de compra 318' } ] },
+        { id: 'T-0151', tipo: 'entrega', titulo: 'Entrega carro de arrastre · Forestal Llanquihue', monto: 240000, asignado: 'pedro', estado: 'pendiente',
+          historial: [ { h: '08:30', txt: 'Creada desde la cotización 77' } ] },
+        { id: 'T-0152', tipo: 'impuestos', titulo: 'Declaración mensual de IVA (F29)', monto: 412000, asignado: 'carla', estado: 'pendiente',
+          historial: [ { h: '08:00', txt: 'Creada por calendario: vence el día 20' } ] },
+      ],
+      draft: null, ui: {}, toast: null, sent: false, pf: { nombre: '', tarea: '', pauta: '', quien: '', wsp: '' },
+    };
+  }
+
+  let S;
+  const NAMES = { jorge: 'Jorge Pérez', carla: 'Carla Muñoz', luis: 'Luis Rojas', pedro: 'Pedro Soto' };
+  function nameOf(id) { const p = S && S.people.find(x => x.id === id); return p ? p.nombre : (NAMES[id] || id); }
+  const first = id => nameOf(id).split(' ')[0];
+  const person = id => S.people.find(p => p.id === id);
+  const owner = () => S.people.find(p => p.owner);
+  const isOwner = () => person(S.viewer)?.owner;
+  const task = id => S.tasks.find(t => t.id === id);
+  const fmt = n => '$' + Math.round(n).toLocaleString('es-CL');
+  const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const initials = n => n.split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase();
+  function now() { S.clock += 3; const h = Math.floor(S.clock / 60), m = S.clock % 60; return String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0'); }
+  function log(t, txt) { t.historial.push({ h: now(), txt }); }
+
+  const ESTADO = {
+    pendiente: { l: 'Por hacer', c: 'idle', stamp: 'En curso' },
+    aprobacion: { l: 'Espera aprobación', c: 'warn', stamp: 'Al dueño' },
+    devuelta: { l: 'Devuelta', c: 'bad', stamp: 'Falta algo' },
+    cerrada: { l: 'Cerrada', c: 'ok', stamp: 'Cerrada' },
+  };
+  const count = e => S.tasks.filter(t => t.estado === e).length;
+
+  /* ------------------------------------------------------------------
+     Regla central del MVP: la tarea se compara contra su pauta.
+     Si algo no calza vuelve al equipo; si calza pero supera el límite
+     o es un tipo crítico, va al dueño; si no, se cierra sola.
+  ------------------------------------------------------------------ */
+  function evaluate(t) {
+    const fails = t.checks.filter(c => !c.ok);
+    const pauta = S.pautas[t.tipo];
+    if (fails.length) {
+      t.estado = 'devuelta';
+      t.motivo = fails.map(f => f.detalle || f.t).join(' · ');
+      log(t, `No pasó la pauta (${fails.length} punto${fails.length > 1 ? 's' : ''}). Volvió a <b>${esc(nameOf(t.asignado))}</b>`);
+    } else if (pauta.siempre) {
+      t.estado = 'aprobacion';
+      t.motivo = 'Tipo de tarea que siempre pasa por ti';
+      log(t, 'Pauta cumplida. Tarea crítica: <b>espera tu aprobación</b>');
+    } else if (t.monto > S.empresa.limite) {
+      t.estado = 'aprobacion';
+      t.motivo = `Monto sobre tu límite de ${fmt(S.empresa.limite)}`;
+      log(t, 'Pauta cumplida. Monto sobre el límite: <b>espera tu aprobación</b>');
+    } else {
+      t.estado = 'cerrada'; t.cierre = 'pauta'; t.motivo = '';
+      log(t, 'Pauta cumplida y bajo el límite: <b>se cerró sola</b>');
+    }
+  }
+
+  /* ------------------------------------------------------------------ navegación */
+  const app = document.getElementById('app');
+  const guideEl = document.getElementById('guide');
+  const sheet = document.getElementById('sheet');
+  const sheetIn = document.getElementById('sheet-in');
+  let stampNext = false;
+
+  function go(screen, param = null, keepHistory = true) {
+    if (keepHistory) S.prev.push([S.screen, S.param]);
+    S.screen = screen; S.param = param; S.ui = {};
+    render(true);
+  }
+  function back() {
+    const p = S.prev.pop();
+    if (p) { S.screen = p[0]; S.param = p[1]; S.ui = {}; render(true); }
+    else go(isOwner() ? 'panel' : 'mis', null, false);
+  }
+  function toast(msg) { S.toast = msg; S.toastFresh = true; clearTimeout(toast.t); toast.t = setTimeout(() => { S.toast = null; const el = app.querySelector('.toast'); if (el) el.remove(); }, 2600); }
+
+  /* ------------------------------------------------------------------ vistas */
+  const ICONS = {
+    panel: '<svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/></svg>',
+    tareas: '<svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 9h8M8 13h8M8 17h5"/></svg>',
+    equipo: '<svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c.6-3.4 3-5 6-5s5.4 1.6 6 5"/><circle cx="17" cy="9" r="2.4"/><path d="M16 15c2.6 0 4.4 1.4 5 4"/></svg>',
+    pautas: '<svg viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11"/><path d="M3.5 6l1.2 1.2L7 5M3.5 12l1.2 1.2L7 11M3.5 18l1.2 1.2L7 17"/></svg>',
+    mis: '<svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 12l3 3 5-6"/></svg>',
+    hechas: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg>',
+  };
+
+  function header() {
+    const me = person(S.viewer);
+    const titles = {
+      bienvenida: ['The Back Office', 'Bienvenida'], onb: ['Configura tu empresa', `Paso ${S.onb} de 3`],
+      panel: ['Panel del dueño', `${S.empresa.nombre} · límite ${fmt(S.empresa.limite)}`],
+      tareas: ['Todas las tareas', S.empresa.nombre], tarea: ['Detalle de tarea', S.param || ''],
+      equipo: ['Tu equipo', 'Quién hace qué y quién reemplaza'], pautas: ['Pautas y límite', 'Qué se revisa antes de cerrar'],
+      probar: ['Probar con mi empresa', 'Una tarea real, configurada por nosotros'],
+      mis: [`Hola, ${first(S.viewer)}`, me ? me.rol : ''], hechas: ['Enviadas hoy', me ? me.nombre : ''],
+      hacer: ['Revisar contra la pauta', S.param || ''], resultado: ['Resultado', S.param || ''],
+    };
+    const [title, sub] = titles[S.screen] || ['The Back Office', ''];
+    const inSetup = S.screen === 'bienvenida' || S.screen === 'onb';
+    const opts = S.people.map(p => `<option value="${p.id}" ${p.id === S.viewer ? 'selected' : ''}>${esc(p.owner ? 'Dueño · ' + first(p.id) : first(p.id) + ' · equipo')}</option>`).join('');
+    return `<header class="top">
+      <div class="top-row">
+        <span class="logo"><b aria-hidden="true"></b>The Back Office</span>
+        <span class="viewas">
+          ${inSetup ? '' : `<label for="viewas">Ver como</label><select id="viewas" data-change="viewas">${opts}</select>`}
+          <button class="guidebtn" data-act="guide">Guía</button>
+        </span>
+      </div>
+      <div><h2>${esc(title)}</h2>${sub ? `<div class="sub">${esc(sub)}</div>` : ''}</div>
+    </header>`;
+  }
+
+  function tabbar() {
+    if (S.screen === 'bienvenida' || S.screen === 'onb') return '';
+    const tabs = isOwner()
+      ? [['panel', 'Inicio', count('aprobacion')], ['tareas', 'Tareas', 0], ['equipo', 'Equipo', 0], ['pautas', 'Pautas', 0]]
+      : [['mis', 'Mis tareas', myOpen().length], ['hechas', 'Enviadas', 0]];
+    const active = { tarea: 'tareas', probar: 'panel', hacer: 'mis', resultado: 'mis' }[S.screen] || S.screen;
+    return `<nav class="tabbar" style="grid-template-columns:repeat(${tabs.length},1fr)" aria-label="Secciones">
+      ${tabs.map(([id, l, n]) => `<button class="tab" data-act="tab" data-to="${id}" ${active === id ? 'aria-current="page"' : ''}>${ICONS[id]}${l}${n ? `<span class="dot">${n}</span>` : ''}</button>`).join('')}
+    </nav>`;
+  }
+
+  /* ---------- bienvenida y configuración ---------- */
+  function vBienvenida() {
+    return `<div class="welcome">
+      <h1>Las tareas simples se cierran solas. Tú revisas solo lo importante.</h1>
+      <p class="lede">Tu equipo marca cada tarea contra una pauta desde el celular. Si todo calza y el monto es bajo, se cierra. Si falta algo, vuelve a quien la hizo. Si el monto es alto, llega a ti.</p>
+      <ol class="howto">
+        <li><span><b>Defines quién hace qué</b>Roles y reemplazos de cada persona.</span></li>
+        <li><span><b>Defines la pauta de cada tarea</b>Lo que debe cumplirse antes de darla por terminada.</span></li>
+        <li><span><b>Fijas tu límite</b>Sobre ese monto, o en temas críticos, la aprobación sigue siendo tuya.</span></li>
+      </ol>
+      <div class="btns">
+        <button class="btn primary wide" data-act="onb-start">Configurar mi empresa</button>
+        <button class="btn ghost wide" data-act="onb-skip">Ver un panel de ejemplo</button>
+      </div>
+    </div>`;
+  }
+
+  function vOnb() {
+    const prog = `<div class="progress" aria-hidden="true">${[1, 2, 3].map(i => `<i class="${i <= S.onb ? 'on' : ''}"></i>`).join('')}</div>`;
+    let body = '';
+    if (S.onb === 1) {
+      body = `<div class="sec">
+        <p class="muted">Partimos con lo básico. Puedes cambiarlo después.</p>
+        <div class="field"><label for="f-emp">Nombre de la empresa</label><input id="f-emp" data-bind="empresa.nombre" value="${esc(S.empresa.nombre)}"></div>
+        <div class="field"><label for="f-rubro">Rubro</label>
+          <select id="f-rubro" data-bind="empresa.rubro">${['Taller de metalmecánica', 'Estudio contable', 'Comercio minorista', 'Servicios de limpieza', 'Cafetería o restorán', 'Otro'].map(r => `<option ${r === S.empresa.rubro ? 'selected' : ''}>${r}</option>`).join('')}</select></div>
+        <div class="field"><label for="f-n">¿Cuántas personas trabajan contigo?</label><input id="f-n" type="number" min="1" inputmode="numeric" data-bind="empresa.personas" value="${S.empresa.personas}"></div>
+      </div>`;
+    } else if (S.onb === 2) {
+      body = `<div class="sec">
+        <p class="muted">Toca los tipos de tarea que hace cada persona. Las tareas le llegarán a ella; si no está, pasan a su reemplazo.</p>
+        ${S.people.filter(p => !p.owner).map(p => `<div class="card">
+          <div class="person"><div class="avatar">${initials(p.nombre)}</div>
+            <div class="sec" style="gap:8px"><div><b>${esc(p.nombre)}</b><div class="small muted">${esc(p.rol)}</div></div>
+            <div class="chips">${Object.entries(S.pautas).map(([k, v]) => `<button class="chip" data-act="tipo" data-p="${p.id}" data-k="${k}" aria-pressed="${p.tipos.includes(k)}">${esc(v.nombre)}</button>`).join('')}</div>
+            <div class="small muted">Reemplazo: <b>${esc(first(p.reemplazo))}</b></div></div></div></div>`).join('')}
+      </div>`;
+    } else {
+      body = `<div class="sec">${limitCard()}
+        <div class="card"><div class="sec-h"><h3>Siempre pasan por ti</h3></div>
+          <p class="small muted">Aunque cumplan la pauta y el monto sea bajo.</p>
+          ${Object.entries(S.pautas).map(([k, v]) => `<div class="toggle-row"><span>${esc(v.nombre)}</span><button class="switch" role="switch" aria-label="${esc(v.nombre)} siempre pasa por mí" aria-checked="${v.siempre}" data-act="siempre" data-k="${k}"></button></div>`).join('')}
+        </div></div>`;
+    }
+    return `${prog}${body}
+      <div class="btns">
+        ${S.onb > 1 ? '<button class="btn ghost" data-act="onb-prev">Atrás</button>' : ''}
+        ${S.onb < 3 ? '<button class="btn primary" data-act="onb-next">Siguiente</button>' : '<button class="btn primary" data-act="onb-finish">Ver mi panel</button>'}
+      </div>`;
+  }
+
+  function limitCard() {
+    return `<div class="card"><div class="sec-h"><h3>Tu límite de aprobación</h3></div>
+      <div class="rangewrap">
+        <div class="limit-v" id="limit-v">${fmt(S.empresa.limite)}</div>
+        <p class="small muted">Sobre este monto, la tarea espera tu aprobación aunque cumpla la pauta.</p>
+        <input id="f-limite" type="range" min="50000" max="1000000" step="10000" value="${S.empresa.limite}" data-input="limite" aria-label="Límite de aprobación">
+        <div class="meta"><span>$50.000</span><span style="margin-left:auto">$1.000.000</span></div>
+      </div></div>`;
+  }
+
+  /* ---------- dueño ---------- */
+  function taskCard(t, opts = {}) {
+    const e = ESTADO[t.estado];
+    const okN = (t.checks || []).filter(c => c.ok).length, totN = (t.checks || S.pautas[t.tipo].items).length;
+    return `<div class="card ${e.c === 'warn' ? 'warn' : e.c === 'bad' ? 'bad' : ''}">
+      <div class="task-top"><div><div class="folio">${t.id} · ${esc(S.pautas[t.tipo].nombre)}</div><div class="task-title">${esc(t.titulo)}</div></div><div class="amount">${fmt(t.monto)}</div></div>
+      <div class="meta"><span>${esc(nameOf(t.asignado))}</span>${t.checks ? `<span>Pauta ${okN}/${totN}</span>` : ''}</div>
+      ${t.motivo ? `<div class="reason ${e.c}">${esc(t.motivo)}</div>` : ''}
+      ${opts.actions ? `<div class="btns">
+          <button class="btn okb sm" data-act="approve" data-id="${t.id}">Aprobar</button>
+          <button class="btn sm" data-act="open" data-id="${t.id}">Ver detalle</button></div>` :
+        `<div class="btns"><button class="btn sm ghost" data-act="open" data-id="${t.id}">Ver detalle</button></div>`}
+    </div>`;
+  }
+
+  function lrow(t) {
+    const e = ESTADO[t.estado];
+    const mark = { ok: '✓', warn: '!', bad: '×', idle: '·' }[e.c];
+    return `<button class="lrow" data-act="open" data-id="${t.id}"><span class="tick ${e.c}">${mark}</span>
+      <span class="t">${esc(t.titulo)}<small>${t.id} · ${esc(first(t.asignado))}${t.cierre === 'dueño' ? ' · aprobada por ti' : ''}</small></span>
+      <span class="amount" style="font-size:13px">${fmt(t.monto)}</span></button>`;
+  }
+
+  function absentBanner() {
+    const off = S.people.filter(p => !p.disponible && !p.owner);
+    return off.map(p => `<div class="banner info"><span><b>${esc(p.nombre)} no está disponible hoy.</b> Sus tareas pasaron a ${esc(first(p.reemplazo))}.</span></div>`).join('');
+  }
+
+  function vPanel() {
+    const ap = S.tasks.filter(t => t.estado === 'aprobacion');
+    const dv = S.tasks.filter(t => t.estado === 'devuelta');
+    const cl = S.tasks.filter(t => t.estado === 'cerrada');
+    const solas = cl.filter(t => t.cierre === 'pauta').length;
+    return `
+      <div class="kpis">
+        <button class="kpi ok" data-act="filter" data-f="cerrada"><span class="n">${solas}</span><span class="l">Cerradas solas</span></button>
+        <button class="kpi warn" data-act="filter" data-f="aprobacion"><span class="n">${ap.length}</span><span class="l">Esperan tu aprobación</span></button>
+        <button class="kpi bad" data-act="filter" data-f="devuelta"><span class="n">${dv.length}</span><span class="l">Devueltas al equipo</span></button>
+      </div>
+      ${absentBanner()}
+      <section class="sec"><div class="sec-h"><h3>Esperan tu aprobación</h3><small>sobre tu límite o críticas</small></div>
+        ${ap.length ? ap.map(t => taskCard(t, { actions: true })).join('') : '<div class="list"><div class="empty">Nada pendiente. Todo lo demás se cerró solo o está en manos del equipo.</div></div>'}
+      </section>
+      <section class="sec"><div class="sec-h"><h3>Devueltas al equipo</h3><small>no pasaron la pauta</small></div>
+        ${dv.length ? `<div class="list">${dv.map(t => `<button class="lrow" data-act="open" data-id="${t.id}"><span class="tick bad">×</span><span class="t">${esc(t.titulo)}<small style="color:var(--bad)">${esc(t.motivo)}</small><small>Lo corrige ${esc(first(t.asignado))}</small></span><span class="amount" style="font-size:13px">${fmt(t.monto)}</span></button>`).join('')}</div>` : '<div class="list"><div class="empty">Ninguna tarea devuelta.</div></div>'}
+      </section>
+      <div class="cta">
+        <h3>¿Lo probamos con una tarea real de tu empresa?</h3>
+        <p>Nos compartes una tarea y su pauta. La dejamos funcionando con tu equipo.</p>
+        <button class="btn" data-act="go" data-to="probar">Quiero probarlo</button>
+      </div>
+      <section class="sec"><div class="sec-h"><h3>Cerradas hoy</h3><small>${solas} sin pasar por ti</small></div>
+        <div class="list">${cl.slice().reverse().map(lrow).join('')}</div>
+      </section>`;
+  }
+
+  function vTareas() {
+    const f = S.filter;
+    const filters = [['todas', 'Todas'], ['aprobacion', 'Esperan aprobación'], ['devuelta', 'Devueltas'], ['pendiente', 'Por hacer'], ['cerrada', 'Cerradas']];
+    const list = S.tasks.filter(t => f === 'todas' || t.estado === f);
+    const order = { aprobacion: 0, devuelta: 1, pendiente: 2, cerrada: 3 };
+    list.sort((a, b) => order[a.estado] - order[b.estado]);
+    return `<div class="filters" role="group" aria-label="Filtrar">${filters.map(([k, l]) => `<button class="chip" data-act="filter" data-f="${k}" aria-pressed="${f === k}">${l} <span class="mono">${k === 'todas' ? S.tasks.length : count(k)}</span></button>`).join('')}</div>
+      ${list.length ? `<div class="list">${list.map(lrow).join('')}</div>` : '<div class="list"><div class="empty">No hay tareas en este estado.</div></div>'}
+      <p class="small muted">Cada tarea guarda quién la hizo y qué se revisó. Toca una para ver su historial.</p>`;
+  }
+
+  function checksBlock(t) {
+    const items = t.checks || S.pautas[t.tipo].items.map(i => ({ ...i, ok: null }));
+    return `<div class="card"><div class="sec-h"><h3>Pauta</h3><small>${esc(S.pautas[t.tipo].nombre)}</small></div>
+      <div class="checks">${items.map(c => {
+        const cls = c.ok === true ? 'ok' : c.ok === false ? 'bad' : 'idle';
+        return `<div class="check"><span class="tick ${cls}">${c.ok === true ? '✓' : c.ok === false ? '×' : '·'}</span><span>${esc(c.t)}${c.ok === false && c.detalle ? `<small>${esc(c.detalle)}</small>` : ''}</span></div>`;
+      }).join('')}</div>
+      ${t.lineas ? qtyTable(t, false) : ''}
+    </div>`;
+  }
+
+  function qtyTable(t, editable) {
+    return `<div style="overflow-x:auto"><table class="qty"><thead><tr><th>Producto</th><th class="num">Pedido</th><th class="num">Recibido</th><th class="num">Dif.</th></tr></thead><tbody>
+      ${t.lineas.map((l, i) => {
+        const rec = editable ? (S.draft.recibido[i] ?? '') : l.recibido;
+        const d = rec === '' || rec == null ? '' : Number(rec) - l.pedido;
+        const dcell = d === '' ? '<span class="muted">–</span>' : d === 0 ? '<span class="diff-ok">0</span>' : `<span class="diff-bad">${d > 0 ? '+' : ''}${d}</span>`;
+        return `<tr><td>${esc(l.p)}</td><td class="num">${l.pedido}</td>
+          <td class="num">${editable ? `<input id="q-${i}" type="number" min="0" inputmode="numeric" value="${rec}" data-input="qty" data-i="${i}" aria-label="Recibido de ${esc(l.p)}" placeholder="0">` : (rec ?? '–')}</td>
+          <td class="num" id="diff-${i}">${dcell}</td></tr>`;
+      }).join('')}</tbody></table></div>`;
+  }
+
+  function vTarea() {
+    const t = task(S.param); if (!t) return '<p>No encontramos la tarea.</p>';
+    const e = ESTADO[t.estado];
+    const others = S.people.filter(p => p.id !== t.asignado);
+    let actions = '';
+    if (t.estado === 'aprobacion' || t.estado === 'devuelta') {
+      actions = `<div class="card"><div class="sec-h"><h3>Tu decisión</h3></div>
+        ${S.ui.reject ? `<div class="field"><label for="f-rej">¿Qué debe corregir ${esc(first(t.asignado))}?</label><textarea id="f-rej" placeholder="Ej: pedir nueva cotización, el precio subió un 15%"></textarea></div>
+          <div class="btns"><button class="btn ghost" data-act="ui" data-k="reject" data-v="">Cancelar</button><button class="btn badb" data-act="reject" data-id="${t.id}">Devolver con comentario</button></div>`
+        : S.ui.reassign ? `<div class="field"><label for="f-re">Pasar la tarea a</label><select id="f-re">${others.map(p => `<option value="${p.id}">${esc(p.nombre)}${p.disponible ? '' : ' (no disponible)'}</option>`).join('')}</select></div>
+          <div class="btns"><button class="btn ghost" data-act="ui" data-k="reassign" data-v="">Cancelar</button><button class="btn primary" data-act="reassign" data-id="${t.id}">Reasignar</button></div>`
+        : `<div class="btns">
+            <button class="btn okb" data-act="approve" data-id="${t.id}">${t.estado === 'devuelta' ? 'Aprobar igual' : 'Aprobar'}</button>
+            ${t.estado === 'aprobacion' ? `<button class="btn badb" data-act="ui" data-k="reject" data-v="1">Devolver</button>` : ''}
+            <button class="btn" data-act="ui" data-k="reassign" data-v="1">Reasignar</button></div>
+          ${t.estado === 'devuelta' ? '<p class="small muted">La tarea ya volvió al equipo para corregirla. Apruébala igual solo si la diferencia no importa.</p>' : ''}`}
+      </div>`;
+    } else if (t.estado === 'pendiente') {
+      actions = `<div class="card"><div class="btns"><button class="btn" data-act="ui" data-k="reassign" data-v="1">Reasignar</button></div>
+        ${S.ui.reassign ? `<div class="field"><label for="f-re">Pasar la tarea a</label><select id="f-re">${others.map(p => `<option value="${p.id}">${esc(p.nombre)}</option>`).join('')}</select></div><div class="btns"><button class="btn primary" data-act="reassign" data-id="${t.id}">Reasignar</button></div>` : ''}</div>`;
+    }
+    return `<button class="back" data-act="back">‹ Volver</button>
+      <div class="detail-h">
+        <div class="folio">${t.id} · ${esc(S.pautas[t.tipo].nombre)}</div>
+        <h1>${esc(t.titulo)}</h1>
+        <div class="task-top" style="align-items:center"><span class="bigamount">${fmt(t.monto)}</span><span class="stamp-mini ${e.c}">${e.stamp}</span></div>
+        <div class="meta"><span class="avatar sm">${initials(nameOf(t.asignado))}</span><span style="align-self:center">${esc(nameOf(t.asignado))}${t.cierre === 'dueño' ? ' · aprobada por ti' : t.cierre === 'pauta' ? ' · cerrada por pauta' : ''}</span></div>
+      </div>
+      ${t.motivo ? `<div class="reason ${e.c}">${esc(t.motivo)}</div>` : ''}
+      ${actions}
+      ${checksBlock(t)}
+      <div class="card"><div class="sec-h"><h3>Historial</h3><small>quién hizo qué</small></div>
+        <ul class="timeline">${t.historial.map(h => `<li><span class="h">${h.h}</span><span>${h.txt}</span></li>`).join('')}</ul></div>`;
+  }
+
+  function vEquipo() {
+    return `${absentBanner()}
+      <p class="small muted">Si alguien no está, sus tareas por hacer pasan a su reemplazo y quedan registradas.</p>
+      ${S.people.map(p => {
+        const open = S.tasks.filter(t => t.asignado === p.id && (t.estado === 'pendiente' || t.estado === 'devuelta')).length;
+        return `<div class="card"><div class="person"><div class="avatar ${p.disponible ? '' : 'off'}">${initials(p.nombre)}</div>
+          <div class="sec" style="gap:8px">
+            <div class="task-top"><div><b>${esc(p.nombre)}</b><div class="small muted">${esc(p.rol)}</div></div>${p.owner ? '<span class="pill idle">Aprueba</span>' : `<span class="pill ${open ? 'gray' : 'ok'}">${open} abierta${open === 1 ? '' : 's'}</span>`}</div>
+            ${p.owner ? `<div class="small muted">Recibe lo que supera ${fmt(S.empresa.limite)} y lo crítico.</div>` : `
+            <div class="chips">${p.tipos.map(k => `<span class="pill gray">${esc(S.pautas[k].nombre)}</span>`).join('')}</div>
+            <div class="small muted">Reemplazo: <b>${esc(nameOf(p.reemplazo))}</b></div>
+            <div class="toggle-row"><span>Disponible hoy</span><button class="switch" role="switch" aria-label="${esc(p.nombre)} disponible hoy" aria-checked="${p.disponible}" data-act="disp" data-p="${p.id}"></button></div>`}
+          </div></div></div>`;
+      }).join('')}`;
+  }
+
+  function vPautas() {
+    return `${limitCard()}
+      <p class="small muted">Cada tipo de tarea tiene su pauta: lo que debe cumplirse antes de cerrarla. Tu equipo la marca desde el celular.</p>
+      ${Object.entries(S.pautas).map(([k, v]) => {
+        const quien = S.people.filter(p => p.tipos.includes(k)).map(p => first(p.id)).join(', ') || 'nadie asignado';
+        const open = S.ui.open === k;
+        return `<div class="card">
+          <div class="task-top"><div><div class="task-title">${esc(v.nombre)}</div><div class="small muted">Lo hace: ${esc(quien)}</div></div>
+            <button class="linkbtn" data-act="ui" data-k="open" data-v="${open ? '' : k}">${open ? 'Listo' : 'Editar'}</button></div>
+          <ul class="pauta-items">${v.items.map((it, i) => `<li><span class="box" aria-hidden="true"></span><span>${esc(it.t)} ${it.k !== 'check' ? `<span class="kind">${it.k === 'foto' ? 'foto' : 'cantidades'}</span>` : ''}</span>${open && v.items.length > 1 ? `<button class="x" data-act="del-item" data-k="${k}" data-i="${i}" aria-label="Quitar punto">×</button>` : '<span></span>'}</li>`).join('')}</ul>
+          ${open ? `<div class="addrow"><input id="add-${k}" placeholder="Agregar punto a la pauta" aria-label="Nuevo punto para ${esc(v.nombre)}"><button class="btn sm primary" style="flex:none" data-act="add-item" data-k="${k}">Agregar</button></div>` : ''}
+          <div class="toggle-row"><span class="small">Siempre pasa por mí</span><button class="switch" role="switch" aria-label="${esc(v.nombre)} siempre pasa por mí" aria-checked="${v.siempre}" data-act="siempre" data-k="${k}"></button></div>
+        </div>`;
+      }).join('')}`;
+  }
+
+  function vProbar() {
+    if (S.sent) {
+      return `<div class="stampwrap"><span class="stamp ok anim">Recibida<small>Tarea de prueba</small></span></div>
+        <div class="sec" style="text-align:center"><h2 style="font-family:var(--f-display);font-size:22px">Gracias, ${esc(S.ui.nombre || 'te contactamos pronto')}.</h2>
+          <p class="muted">En el MVP real, el equipo de The Back Office te escribe por WhatsApp para armar la pauta contigo y dejarla lista con tu equipo.</p>
+          <p class="small muted">Esto es un prototipo: el formulario no envía nada.</p></div>
+        <button class="btn primary" data-act="tab" data-to="panel">Volver al panel</button>`;
+    }
+    const tipos = Object.values(S.pautas).map(v => v.nombre).filter(n => !/Impuestos/.test(n));
+    return `<button class="back" data-act="back">‹ Volver</button>
+      <div class="sec"><h2 style="font-family:var(--f-display);font-size:24px;line-height:1.1">Comparte una tarea real y la dejamos funcionando</h2>
+        <ol class="howto">
+          <li><span><b>Nos cuentas la tarea y su pauta</b>Qué pasos deben cumplirse para darla por terminada.</span></li>
+          <li><span><b>Definimos roles y tu límite</b>Quién la hace, quién lo reemplaza y desde qué monto pasa por ti.</span></li>
+          <li><span><b>Tu equipo la usa desde el celular</b>Tú solo ves lo que supera tu límite o no calza.</span></li>
+        </ol></div>
+      <form class="sec" id="f-probar" data-submit="probar" novalidate>
+        <div class="field"><label for="p-nombre">Tu nombre</label><input id="p-nombre" data-pf="nombre" value="${esc(S.pf.nombre)}" placeholder="Ej: Jorge Pérez"></div>
+        <div class="field"><label for="p-tarea">Tarea que quieres probar</label><select id="p-tarea" data-pf="tarea">${[...tipos, 'Otra'].map(n => `<option ${S.pf.tarea === n ? 'selected' : ''}>${esc(n)}</option>`).join('')}</select></div>
+        <div class="field"><label for="p-pauta">¿Qué debe cumplirse antes de cerrarla?</label><textarea id="p-pauta" data-pf="pauta" placeholder="Ej: que lo recibido calce con la orden de compra y que esté la foto de la guía">${esc(S.pf.pauta)}</textarea></div>
+        <div class="field"><label for="p-quien">¿Quiénes participan?</label><input id="p-quien" data-pf="quien" value="${esc(S.pf.quien)}" placeholder="Ej: bodeguero y asistente"></div>
+        <div class="field"><label for="p-wsp">WhatsApp</label><input id="p-wsp" data-pf="wsp" value="${esc(S.pf.wsp)}" inputmode="tel" placeholder="+56 9 1234 5678"><span class="hint">Te escribimos por aquí para configurarla.</span></div>
+        ${S.ui.err ? `<div class="reason bad">${esc(S.ui.err)}</div>` : ''}
+        <div class="reason info">Plan mensual de $30.000. La primera tarea la configuramos contigo sin costo.</div>
+        <button class="btn primary" type="submit">Enviar mi tarea</button>
+      </form>`;
+  }
+
+  /* ---------- equipo (vista celular del trabajador) ---------- */
+  const myOpen = () => S.tasks.filter(t => t.asignado === S.viewer && (t.estado === 'pendiente' || t.estado === 'devuelta'));
+
+  function vMis() {
+    const me = person(S.viewer);
+    const todo = S.tasks.filter(t => t.asignado === S.viewer && t.estado === 'pendiente');
+    const fix = S.tasks.filter(t => t.asignado === S.viewer && t.estado === 'devuelta');
+    const moved = S.tasks.filter(t => t.asignado === S.viewer && t.reasignadaDe && (t.estado === 'pendiente' || t.estado === 'devuelta'));
+    return `${!me.disponible ? `<div class="banner info"><span><b>Hoy estás marcado como no disponible.</b> Tus tareas pasaron a ${esc(first(me.reemplazo))}.</span></div>` : ''}
+      ${moved.length ? `<div class="banner info"><span><b>${moved.length > 1 ? `Te llegaron ${moved.length} tareas` : 'Te llegó 1 tarea'} de ${esc(first(moved[0].reasignadaDe))}</b>, que no está hoy.</span></div>` : ''}
+      ${fix.length ? `<section class="sec"><div class="sec-h"><h3>Para corregir</h3><small>no pasaron la pauta</small></div>
+        ${fix.map(t => `<div class="card bad"><div class="task-top"><div><div class="folio">${t.id} · ${esc(S.pautas[t.tipo].nombre)}</div><div class="task-title">${esc(t.titulo)}</div></div><div class="amount">${fmt(t.monto)}</div></div>
+          <div class="reason bad">${esc(t.motivo)}</div>
+          <div class="btns"><button class="btn primary" data-act="start" data-id="${t.id}">Corregir</button>
+          ${t.lineas ? `<button class="btn" data-act="escalate" data-id="${t.id}">Avisar diferencia al dueño</button>` : ''}</div></div>`).join('')}</section>` : ''}
+      <section class="sec"><div class="sec-h"><h3>Por hacer</h3><small>${todo.length} hoy</small></div>
+        ${todo.length ? todo.map(t => `<div class="card"><div class="task-top"><div><div class="folio">${t.id} · ${esc(S.pautas[t.tipo].nombre)}</div><div class="task-title">${esc(t.titulo)}</div></div><div class="amount">${fmt(t.monto)}</div></div>
+          <div class="meta"><span>${S.pautas[t.tipo].items.length} puntos en la pauta</span></div>
+          <button class="btn primary" data-act="start" data-id="${t.id}">Empezar</button></div>`).join('') : '<div class="list"><div class="empty">No tienes tareas pendientes.</div></div>'}
+      </section>`;
+  }
+
+  function vHechas() {
+    const mine = S.tasks.filter(t => t.asignado === S.viewer && t.estado !== 'pendiente');
+    return mine.length ? `<div class="list">${mine.slice().reverse().map(lrowWorker).join('')}</div>` : '<div class="list"><div class="empty">Todavía no envías tareas hoy.</div></div>';
+  }
+  function lrowWorker(t) {
+    const e = ESTADO[t.estado];
+    const lbl = t.estado === 'cerrada' ? (t.cierre === 'dueño' ? 'Aprobada' : 'Cerrada sola') : t.estado === 'aprobacion' ? 'Con el dueño' : 'Corregir';
+    return `<button class="lrow" data-act="${t.estado === 'devuelta' ? 'start' : 'noop'}" data-id="${t.id}"><span class="tick ${e.c}">${{ ok: '✓', warn: '!', bad: '×', idle: '·' }[e.c]}</span>
+      <span class="t">${esc(t.titulo)}<small>${t.id} · ${fmt(t.monto)}</small></span><span class="pill ${e.c}">${lbl}</span></button>`;
+  }
+
+  function startDraft(t) {
+    const items = S.pautas[t.tipo].items;
+    const prev = t.checks || [];
+    S.draft = {
+      id: t.id,
+      checks: items.map((it, i) => (prev[i] && prev[i].t === it.t && prev[i].ok && it.k === 'check') || false),
+      fotos: items.map((it, i) => (prev[i] && prev[i].t === it.t && prev[i].ok && it.k === 'foto') ? (it.t.includes('guía') ? 'guia_despacho.jpg' : 'adjunto.jpg') : null),
+      recibido: t.lineas ? t.lineas.map(l => l.recibido ?? '') : [],
+      nota: '',
+    };
+  }
+
+  function vHacer() {
+    const t = task(S.param); const d = S.draft;
+    if (!t || !d || d.id !== t.id) return '<p>No hay una tarea abierta.</p>';
+    const items = S.pautas[t.tipo].items;
+    const willGo = S.pautas[t.tipo].siempre ? 'Esta tarea siempre pasa por el dueño.' : t.monto > S.empresa.limite ? `El monto supera ${fmt(S.empresa.limite)}: si todo calza, pasa al dueño.` : 'Si todo calza con la pauta, se cierra sola.';
+    return `<button class="back" data-act="back">‹ Mis tareas</button>
+      <div class="detail-h"><div class="folio">${t.id} · ${esc(S.pautas[t.tipo].nombre)}</div><h1>${esc(t.titulo)}</h1><span class="bigamount">${fmt(t.monto)}</span></div>
+      ${t.estado === 'devuelta' ? `<div class="reason bad">Por corregir: ${esc(t.motivo)}</div>` : ''}
+      <div class="card"><div class="sec-h"><h3>Pauta</h3><small>marca lo que se cumple</small></div>
+        <div>${items.map((it, i) => {
+          if (it.k === 'cantidades') return `<div class="todo" style="grid-template-columns:1fr"><span><b>${esc(it.t)}</b><span class="small muted" style="display:block">Anota lo que llegó. Las diferencias se marcan solas.</span>${qtyTable(t, true)}</span></div>`;
+          if (it.k === 'foto') return `<div class="todo" style="cursor:default"><span class="cbox" style="${d.fotos[i] ? 'background:var(--ok);border-color:var(--ok);color:var(--card)' : ''}">✓</span>
+            <span>${esc(it.t)}<span class="photo">${d.fotos[i] ? `<span class="thumb" aria-hidden="true"></span><span class="small mono">${esc(d.fotos[i])}</span><button class="linkbtn" data-act="foto" data-i="${i}">Quitar</button>` : `<button class="btn sm" style="flex:none" data-act="foto" data-i="${i}">Tomar foto</button>`}</span></span></div>`;
+          return `<button class="todo" role="checkbox" aria-checked="${!!d.checks[i]}" data-act="chk" data-i="${i}"><span class="cbox">✓</span><span>${esc(it.t)}</span></button>`;
+        }).join('')}</div></div>
+      <div class="field"><label for="f-nota">Nota (opcional)</label><textarea id="f-nota" data-input="nota" placeholder="Ej: el proveedor envía lo que falta el jueves">${esc(d.nota)}</textarea></div>
+      <div class="reason info">${willGo}</div>
+      <button class="btn primary" data-act="submit">Cerrar tarea</button>`;
+  }
+
+  function submitDraft() {
+    const t = task(S.draft.id); const d = S.draft;
+    const items = S.pautas[t.tipo].items;
+    t.checks = items.map((it, i) => {
+      if (it.k === 'cantidades') {
+        const diffs = t.lineas.map((l, j) => ({ l, r: d.recibido[j] === '' ? null : Number(d.recibido[j]) })).filter(x => x.r !== x.l.pedido);
+        t.lineas.forEach((l, j) => { l.recibido = d.recibido[j] === '' ? null : Number(d.recibido[j]); });
+        return { t: it.t, k: it.k, ok: diffs.length === 0, detalle: diffs.length ? 'Diferencia: ' + diffs.map(x => `${x.l.p} ${x.r ?? 0} de ${x.l.pedido}`).join(', ') : '' };
+      }
+      if (it.k === 'foto') return { t: it.t, k: it.k, ok: !!d.fotos[i], detalle: d.fotos[i] ? '' : 'Falta: ' + it.t.toLowerCase() };
+      return { t: it.t, k: it.k, ok: !!d.checks[i], detalle: d.checks[i] ? '' : 'No marcado: ' + it.t.toLowerCase() };
+    });
+    log(t, `<b>${esc(nameOf(S.viewer))}</b> ${t.estado === 'devuelta' ? 'corrigió y reenvió' : 'completó'} la pauta${d.nota ? `. Nota: «${esc(d.nota)}»` : ''}`);
+    t.asignado = S.viewer;
+    evaluate(t);
+    S.draft = null; stampNext = true;
+    go('resultado', t.id, false);
+  }
+
+  function vResultado() {
+    const t = task(S.param); if (!t) return '';
+    const e = ESTADO[t.estado];
+    const txt = {
+      cerrada: ['Se cerró sola', 'Todo calzó con la pauta y el monto está bajo el límite. No tuvo que pasar por el dueño.'],
+      aprobacion: ['Pasó al dueño', `La pauta se cumplió. ${t.motivo}, así que ${first(owner().id)} la aprueba.`],
+      devuelta: ['Falta algo', 'La tarea no se cerró. Corrige lo que falta o, si la diferencia es real, avísale al dueño.'],
+    }[t.estado] || ['', ''];
+    const anim = stampNext ? ' anim' : ''; stampNext = false;
+    return `<div class="stampwrap"><span class="stamp ${e.c}${anim}">${e.stamp}<small>${t.id}</small></span></div>
+      <div class="sec" style="text-align:center"><h2 style="font-family:var(--f-display);font-size:24px">${txt[0]}</h2><p class="muted">${esc(txt[1])}</p></div>
+      ${t.estado === 'devuelta' ? `<div class="reason bad">${esc(t.motivo)}</div>` : ''}
+      ${checksBlock(t)}
+      <div class="btns">
+        ${t.estado === 'devuelta' ? `<button class="btn primary wide" data-act="start" data-id="${t.id}">Corregir ahora</button>${t.lineas ? `<button class="btn wide" data-act="escalate" data-id="${t.id}">Avisar diferencia al dueño</button>` : ''}` : ''}
+        <button class="btn ${t.estado === 'devuelta' ? 'ghost' : 'primary'} wide" data-act="tab" data-to="mis">Volver a mis tareas</button>
+      </div>`;
+  }
+
+  /* ------------------------------------------------------------------ guía lateral */
+  const STEPS = [
+    ['Configura tu empresa', 'Roles, pautas y límite', 'bienvenida'],
+    ['Aprueba el pago a Aceros del Sur', 'Vista del dueño', 'panel'],
+    ['Como Luis, recibe la OC 318', 'Vista del equipo en el celular', 'luis'],
+    ['Marca a Luis como ausente', 'Sus tareas pasan a Carla', 'equipo'],
+    ['Pide probarlo con una tarea real', 'La petición del MVP', 'probar'],
+  ];
+  function guideHTML() {
+    const here = S.screen === 'onb' ? 'bienvenida' : (!isOwner() && S.viewer === 'luis') ? 'luis' : S.screen;
+    return `<div class="brandline">Prototipo navegable · MVP Mago de Oz</div>
+      <h1>The Back Office</h1>
+      <p class="lede">Tu equipo cierra las tareas contra una pauta. Al dueño solo le llega lo que supera su límite o no calza.</p>
+      <div class="sec-h"><h3>Guion de la prueba de uso</h3></div>
+      <ol class="steps">${STEPS.map(([a, b, to]) => `<li class="${here === to ? 'here' : ''}"><span>${a}<small>${b}</small></span><button class="linkbtn" data-act="jump" data-to="${to}">Ir</button></li>`).join('')}</ol>
+      <div class="row"><button class="btn sm" style="flex:none" data-act="reset">Reiniciar prototipo</button></div>
+      <p class="note">Empresa, personas, montos y proveedores son ejemplos inventados. En el MVP, el chequeo contra la pauta lo hace a mano el equipo de The Back Office; para el usuario se ve automático.</p>`;
+  }
+
+  /* ------------------------------------------------------------------ render */
+  const VIEWS = { bienvenida: vBienvenida, onb: vOnb, panel: vPanel, tareas: vTareas, tarea: vTarea, equipo: vEquipo, pautas: vPautas, probar: vProbar, mis: vMis, hechas: vHechas, hacer: vHacer, resultado: vResultado };
+
+  function render(resetScroll) {
+    const sc = app.querySelector('.scroll');
+    const top = sc && !resetScroll ? sc.scrollTop : 0;
+    const active = document.activeElement && document.activeElement.id;
+    app.innerHTML = header() + `<main class="scroll">${(VIEWS[S.screen] || vPanel)()}</main>` + tabbar() + (S.toast ? `<div class="toast${S.toastFresh ? ' in' : ''}" role="status">${esc(S.toast)}</div>` : '');
+    S.toastFresh = false;
+    const nsc = app.querySelector('.scroll'); if (nsc) nsc.scrollTop = top;
+    if (active && !resetScroll) { const el = document.getElementById(active); if (el && el.tagName !== 'BUTTON') el.focus(); }
+    guideEl.innerHTML = guideHTML();
+    if (!sheet.hidden) sheetIn.innerHTML = `<div class="guide">${guideHTML()}</div><button class="btn" data-act="guide-close">Cerrar</button>`;
+  }
+
+  /* ------------------------------------------------------------------ acciones */
+  function setViewer(id) {
+    S.viewer = id; S.prev = []; S.draft = null;
+    go(isOwner() ? 'panel' : 'mis', null, false);
+  }
+
+  function act(a, d) {
+    switch (a) {
+      case 'noop': return;
+      case 'tab': S.prev = []; return go(d.to, null, false);
+      case 'go': return go(d.to);
+      case 'back': return back();
+      case 'open': return go('tarea', d.id);
+      case 'filter': S.filter = d.f; S.prev = []; return go('tareas', null, false);
+      case 'ui': S.ui[d.k] = d.v || null; return render();
+      case 'onb-start': S.onb = 1; return go('onb');
+      case 'onb-skip': S.prev = []; return go('panel', null, false);
+      case 'onb-next': S.onb++; return render(true);
+      case 'onb-prev': S.onb--; return render(true);
+      case 'onb-finish': S.prev = []; toast('Listo. Así se ve tu día con The Back Office.'); return go('panel', null, false);
+      case 'tipo': {
+        const p = person(d.p); p.tipos = p.tipos.includes(d.k) ? p.tipos.filter(x => x !== d.k) : [...p.tipos, d.k];
+        return render();
+      }
+      case 'siempre': S.pautas[d.k].siempre = !S.pautas[d.k].siempre; return render();
+      case 'approve': {
+        const t = task(d.id); t.estado = 'cerrada'; t.cierre = 'dueño'; t.motivo = '';
+        log(t, `<b>${esc(nameOf(S.viewer))}</b> aprobó la tarea`);
+        toast(`Aprobada: ${t.titulo}`);
+        return S.screen === 'tarea' ? back() : render();
+      }
+      case 'reject': {
+        const t = task(d.id); const txt = (document.getElementById('f-rej')?.value || '').trim();
+        t.estado = 'devuelta'; t.motivo = txt ? `Comentario del dueño: ${txt}` : 'Devuelta por el dueño para revisar';
+        log(t, `<b>${esc(nameOf(S.viewer))}</b> la devolvió${txt ? `: «${esc(txt)}»` : ''}`);
+        toast(`Devuelta a ${first(t.asignado)}`); S.ui = {}; return render();
+      }
+      case 'reassign': {
+        const t = task(d.id); const to = document.getElementById('f-re').value; const from = t.asignado;
+        t.asignado = to; if (t.estado === 'devuelta') t.estado = 'pendiente';
+        log(t, `<b>${esc(nameOf(S.viewer))}</b> la pasó de ${esc(first(from))} a <b>${esc(nameOf(to))}</b>`);
+        toast(`Reasignada a ${first(to)}`); S.ui = {}; return render();
+      }
+      case 'disp': {
+        const p = person(d.p); p.disponible = !p.disponible;
+        if (!p.disponible) {
+          let to = p.reemplazo; if (!person(to)?.disponible) to = owner().id;
+          const moved = S.tasks.filter(t => t.asignado === p.id && (t.estado === 'pendiente' || t.estado === 'devuelta'));
+          moved.forEach(t => { t.asignado = to; t.reasignadaDe = p.id; log(t, `${esc(p.nombre)} no está disponible. Pasó automáticamente a <b>${esc(nameOf(to))}</b>`); });
+          toast(moved.length ? `${moved.length} tarea${moved.length > 1 ? 's' : ''} de ${first(p.id)} pasaron a ${first(to)}` : `${first(p.id)} no tiene tareas abiertas`);
+        } else toast(`${first(p.id)} vuelve a recibir tareas nuevas`);
+        return render();
+      }
+      case 'add-item': {
+        const inp = document.getElementById('add-' + d.k); const v = (inp?.value || '').trim();
+        if (!v) { inp?.focus(); return; }
+        S.pautas[d.k].items.push({ t: v, k: 'check' }); return render();
+      }
+      case 'del-item': S.pautas[d.k].items.splice(Number(d.i), 1); return render();
+      case 'start': {
+        const t = task(d.id); if (!t) return;
+        startDraft(t); return go('hacer', t.id);
+      }
+      case 'chk': S.draft.checks[d.i] = !S.draft.checks[d.i]; return render();
+      case 'foto': {
+        const t = task(S.draft.id); const it = S.pautas[t.tipo].items[d.i];
+        S.draft.fotos[d.i] = S.draft.fotos[d.i] ? null : (it.t.includes('guía') ? 'guia_despacho.jpg' : it.t.includes('orden') ? 'orden_compra.jpg' : 'trabajo_terminado.jpg');
+        return render();
+      }
+      case 'submit': return submitDraft();
+      case 'escalate': {
+        const t = task(d.id); t.estado = 'aprobacion'; t.motivo = `Diferencia reportada por ${first(S.viewer)}. ${t.checks.filter(c => !c.ok).map(c => c.detalle).join(' · ')}`;
+        log(t, `<b>${esc(nameOf(S.viewer))}</b> avisó la diferencia al dueño`);
+        toast('Enviada al dueño con la diferencia'); S.prev = []; return go('mis', null, false);
+      }
+      case 'jump': {
+        closeSheet();
+        if (d.to === 'luis') return setViewer('luis');
+        if (!isOwner()) S.viewer = owner().id;
+        S.prev = []; return go(d.to, null, false);
+      }
+      case 'reset': closeSheet(); S = seed(); return render(true);
+      case 'guide': sheet.hidden = false; return render();
+      case 'guide-close': return closeSheet();
+    }
+  }
+  function closeSheet() { sheet.hidden = true; }
+
+  document.addEventListener('click', e => {
+    if (e.target === sheet) return closeSheet();
+    const el = e.target.closest('[data-act]'); if (!el || el.disabled) return;
+    e.preventDefault(); act(el.dataset.act, el.dataset);
+  });
+  document.addEventListener('change', e => {
+    const el = e.target;
+    if (el.dataset.change === 'viewas') return setViewer(el.value);
+    if (el.dataset.bind) { const [o, k] = el.dataset.bind.split('.'); S[o][k] = el.type === 'number' ? Number(el.value) : el.value; }
+    if (el.dataset.pf) S.pf[el.dataset.pf] = el.value;
+  });
+  document.addEventListener('input', e => {
+    const el = e.target;
+    if (el.dataset.input === 'limite') {
+      S.empresa.limite = Number(el.value);
+      const v = document.getElementById('limit-v'); if (v) v.textContent = fmt(S.empresa.limite);
+      const sub = app.querySelector('.top .sub'); if (sub && S.screen === 'panel') sub.textContent = `${S.empresa.nombre} · límite ${fmt(S.empresa.limite)}`;
+    }
+    if (el.dataset.input === 'nota' && S.draft) S.draft.nota = el.value;
+    if (el.dataset.input === 'qty' && S.draft) {
+      const i = Number(el.dataset.i); S.draft.recibido[i] = el.value;
+      const t = task(S.draft.id); const cell = document.getElementById('diff-' + i);
+      if (cell) {
+        const dd = el.value === '' ? '' : Number(el.value) - t.lineas[i].pedido;
+        cell.innerHTML = dd === '' ? '<span class="muted">–</span>' : dd === 0 ? '<span class="diff-ok">0</span>' : `<span class="diff-bad">${dd > 0 ? '+' : ''}${dd}</span>`;
+      }
+    }
+    if (el.dataset.bind) { const [o, k] = el.dataset.bind.split('.'); S[o][k] = el.type === 'number' ? Number(el.value) : el.value; }
+    if (el.dataset.pf) S.pf[el.dataset.pf] = el.value;
+  });
+  document.addEventListener('submit', e => {
+    const f = e.target; if (f.dataset.submit !== 'probar') return;
+    e.preventDefault();
+    const nombre = S.pf.nombre.trim();
+    const wsp = S.pf.wsp.trim();
+    if (!nombre || !wsp) { S.ui.err = 'Escribe tu nombre y un WhatsApp para poder contactarte.'; return render(); }
+    S.ui = { nombre: nombre.split(' ')[0] }; S.sent = true; render(true);
+  });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && !sheet.hidden) closeSheet();
+    if (e.key === 'Enter' && e.target.id && e.target.id.startsWith('add-')) { e.preventDefault(); act('add-item', { k: e.target.id.slice(4) }); }
+  });
+
+  /* ------------------------------------------------------------------ inicio */
+  S = seed();
+  const hash = (location.hash || '').slice(1);
+  if (hash === 'luis') { S.viewer = 'luis'; S.screen = 'mis'; }
+  else if (VIEWS[hash] && !['tarea', 'hacer', 'resultado', 'onb'].includes(hash)) S.screen = hash;
+  render(true);
+})();
+</script>
+</body>
+</html>
