@@ -176,8 +176,20 @@ p { margin: 0; }
 .chips { display: flex; gap: 6px; flex-wrap: wrap; }
 .chip { border: 1px solid var(--line); background: var(--card); border-radius: 999px; padding: 5px 11px; font-size: 12.5px; font-weight: 600; color: var(--muted); }
 .chip[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
-.filters { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 2px; scrollbar-width: none; }
-.filters .chip { flex: none; }
+.filterwrap { position: relative; margin-inline: -16px; }
+.filters { display: flex; gap: 6px; overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x proximity; scroll-padding-inline: 16px; padding: 2px 16px 8px; cursor: grab; scrollbar-width: thin; scrollbar-color: var(--line) transparent; touch-action: pan-x pan-y; }
+.filters::-webkit-scrollbar { height: 4px; }
+.filters::-webkit-scrollbar-thumb { background: var(--line); border-radius: 4px; }
+.filters.dragging { cursor: grabbing; scroll-snap-type: none; user-select: none; }
+.filters .chip { flex: none; white-space: nowrap; scroll-snap-align: start; }
+.filterwrap::before, .filterwrap::after { content: ""; position: absolute; top: 0; bottom: 8px; width: 40px; pointer-events: none; opacity: 0; transition: opacity .15s; z-index: 1; }
+.filterwrap::before { left: 0; background: linear-gradient(90deg, var(--paper) 30%, transparent); }
+.filterwrap::after { right: 0; background: linear-gradient(270deg, var(--paper) 30%, transparent); }
+.filterwrap.can-left::before, .filterwrap.can-right::after { opacity: 1; }
+.fbtn { position: absolute; top: 2px; z-index: 2; width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--line); background: var(--card); color: var(--ink); font-weight: 800; font-size: 15px; line-height: 1; display: none; place-items: center; padding: 0; box-shadow: 0 2px 6px rgba(19, 26, 44, .12); }
+.fbtn.l { left: 6px; } .fbtn.r { right: 6px; }
+.filterwrap.can-left .fbtn.l, .filterwrap.can-right .fbtn.r { display: grid; }
+@media (prefers-reduced-motion: reduce) { .filterwrap::before, .filterwrap::after { transition: none; } }
 
 .back { align-self: flex-start; background: none; border: 0; padding: 0; color: var(--accent); font-weight: 700; font-size: 14px; }
 .detail-h { display: flex; flex-direction: column; gap: 6px; }
@@ -527,8 +539,10 @@ p { margin: 0; }
     return e;
   }
   function valLimit(pre) {
-    const v = getPath(pre + '.limite'), m = money(v), e = {};
-    if (blank(v)) e[pre + '.limite'] = 'Define desde qué monto una tarea pasa por ti.'; else if (!m) e[pre + '.limite'] = 'Escribe un monto mayor que $0.';
+    const v = String(getPath(pre + '.limite') ?? '').trim(), e = {};
+    if (blank(v)) e[pre + '.limite'] = 'Define desde qué monto una tarea pasa por ti. Puede ser $0.';
+    else if (v.includes('-')) e[pre + '.limite'] = 'El monto debe ser mayor o igual a $0.';
+    else if (!/^\$?\s*\d[\d.\s]*$/.test(v)) e[pre + '.limite'] = 'Escribe solo números, por ejemplo 200000 o 0.';
     return e;
   }
   function valPerson(pre) {
@@ -755,7 +769,7 @@ p { margin: 0; }
       ${withLimit ? limitField(pre) : ''}`;
   }
   function limitField(pre) {
-    return F(pre + '.limite', 'Límite de aprobación (CLP)', { req: true, im: 'numeric', ph: 'Ej: 200000', hint: 'Sobre este monto, una tarea espera tu aprobación aunque cumpla la pauta.' });
+    return F(pre + '.limite', 'Límite de aprobación (CLP)', { req: true, im: 'numeric', ph: 'Ej: 200000', hint: 'Monto mayor o igual a $0. Sobre este monto, la tarea espera tu aprobación aunque cumpla la pauta. Con $0, toda tarea con monto pasa por ti.' });
   }
 
   /* ==================================================================
@@ -961,7 +975,9 @@ p { margin: 0; }
     const filters = [['todas', 'Todas'], ['pendiente', 'Por hacer'], ['aprobacion', 'Esperan aprobación'], ['devuelta', 'Devueltas'], ['cerrada', 'Cerradas']];
     const list = S.tasks.filter(t => f === 'todas' || t.estado === f);
     return `<div class="totalline"><b>${S.tasks.length} tarea${S.tasks.length === 1 ? '' : 's'}</b><button class="btn sm primary" style="flex:none" data-act="new-task">+ Nueva tarea</button></div>
-      <div class="filters" role="group" aria-label="Filtrar">${filters.map(([k, l]) => `<button class="chip" data-act="filter" data-f="${k}" aria-pressed="${f === k}">${l} <span class="mono">${k === 'todas' ? S.tasks.length : count(k)}</span></button>`).join('')}</div>
+      <div class="filterwrap"><button class="fbtn l" data-act="fscroll" data-d="-1" aria-label="Ver filtros anteriores" tabindex="-1">‹</button>
+        <div class="filters" id="filters" role="group" aria-label="Filtrar tareas (desliza para ver más)">${filters.map(([k, l]) => `<button class="chip" data-act="filter" data-f="${k}" aria-pressed="${f === k}">${l} <span class="mono">${k === 'todas' ? S.tasks.length : count(k)}</span></button>`).join('')}</div>
+        <button class="fbtn r" data-act="fscroll" data-d="1" aria-label="Ver más filtros" tabindex="-1">›</button></div>
       ${list.length ? `<div class="list">${list.map(t => lrow(t)).join('')}</div>` : '<div class="list"><div class="empty">No hay tareas en este estado.</div></div>'}
       <p class="small muted">Toca una tarea para editarla, cambiar su pauta o quitarla.</p>
       ${uploader('tareas')}`;
@@ -1219,6 +1235,7 @@ p { margin: 0; }
     S.toastFresh = false;
     const nsc = app.querySelector('.scroll'); if (nsc) nsc.scrollTop = top;
     if (active && !resetScroll) { const el = document.getElementById(active); if (el && el.tagName !== 'BUTTON' && el.type !== 'file') el.focus({ preventScroll: true }); }
+    setupFilters();
     guideEl.innerHTML = guideHTML();
     if (!sheet.hidden) sheetIn.innerHTML = `<div class="guide">${guideHTML()}</div><button class="btn" data-act="guide-close">Cerrar</button>`;
   }
@@ -1353,6 +1370,7 @@ p { margin: 0; }
         importRows(d.k, parseTable(txt), 'las filas pegadas'); return render();
       }
 
+      case 'fscroll': { const el = document.getElementById('filters'); if (el) el.scrollBy({ left: Number(d.d) * el.clientWidth * 0.7, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }); return; }
       case 'fill': return fillExample();
       case 'load-demo': closeSheet(); return loadDemo('Entraste a la cuenta de ejemplo: Taller Pérez');
       case 'jump': {
@@ -1376,7 +1394,50 @@ p { margin: 0; }
   /* ==================================================================
      Eventos
   ================================================================== */
+  /* ---------- filtros deslizables: dedo, arrastre con mouse, rueda y flechas ---------- */
+  function updateFade(el) {
+    const w = el.parentElement; if (!w) return;
+    const max = el.scrollWidth - el.clientWidth;
+    w.classList.toggle('can-left', el.scrollLeft > 4);
+    w.classList.toggle('can-right', el.scrollLeft < max - 4);
+  }
+  function setupFilters() {
+    const el = document.getElementById('filters'); if (!el) return;
+    el.scrollLeft = S.fscroll || 0;
+    const a = el.querySelector('[aria-pressed="true"]');
+    if (a) {
+      if (a.offsetLeft - 16 < el.scrollLeft) el.scrollLeft = a.offsetLeft - 16;
+      else if (a.offsetLeft + a.offsetWidth + 16 > el.scrollLeft + el.clientWidth) el.scrollLeft = a.offsetLeft + a.offsetWidth + 16 - el.clientWidth;
+    }
+    updateFade(el);
+    el.addEventListener('scroll', () => { S.fscroll = el.scrollLeft; updateFade(el); }, { passive: true });
+    el.addEventListener('wheel', e => {
+      if (Math.abs(e.deltaY) <= Math.abs(e.deltaX) || el.scrollWidth <= el.clientWidth) return;
+      const max = el.scrollWidth - el.clientWidth;
+      if ((e.deltaY < 0 && el.scrollLeft <= 0) || (e.deltaY > 0 && el.scrollLeft >= max)) return;
+      e.preventDefault(); el.scrollLeft += e.deltaY;
+    }, { passive: false });
+  }
+  let drag = null, justDragged = false;
+  document.addEventListener('pointerdown', e => {
+    const el = e.target.closest && e.target.closest('.filters');
+    if (!el || e.pointerType !== 'mouse' || e.button !== 0) return;
+    drag = { el, x: e.clientX, left: el.scrollLeft, moved: false };
+  });
+  document.addEventListener('pointermove', e => {
+    if (!drag) return;
+    const dx = e.clientX - drag.x;
+    if (!drag.moved && Math.abs(dx) > 5) { drag.moved = true; drag.el.classList.add('dragging'); }
+    if (drag.moved) drag.el.scrollLeft = drag.left - dx;
+  });
+  document.addEventListener('pointerup', () => {
+    if (!drag) return;
+    if (drag.moved) { justDragged = true; setTimeout(() => { justDragged = false; }, 0); }
+    drag.el.classList.remove('dragging'); drag = null;
+  });
+
   document.addEventListener('click', e => {
+    if (justDragged && e.target.closest('.filters')) { e.preventDefault(); return; }
     if (e.target === sheet) return closeSheet();
     const el = e.target.closest('[data-act]'); if (!el || el.disabled) return;
     e.preventDefault(); act(el.dataset.act, el.dataset);
