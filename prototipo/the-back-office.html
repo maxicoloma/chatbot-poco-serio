@@ -378,9 +378,9 @@ p { margin: 0; }
     return {
       screen: 'auth', param: null, prev: [], authTab: 'registro', onb: 1, onbDone: false,
       viewer: 'owner', filter: 'todas', clock: 9 * 60, nextT: 101, nextP: 1,
-      auth: { nombre: '', correo: '', pass: '', pass2: '', terminos: false },
+      auth: { nombre: '', empresa: '', telefono: '' },
       account: null, demo: false,
-      empresa: { razon: '', fantasia: '', rut: '', giro: '', comuna: '', region: '', direccion: '', trabajadores: '', telefono: '', cargo: '', limite: '' },
+      empresa: { razon: '', fantasia: '', rut: '', giro: '', comuna: '', region: '', direccion: '', trabajadores: '', cargo: '', limite: '' },
       people: [], tasks: [],
       errs: {}, asistida: { colab: null, tareas: null }, importMsg: { colab: null, tareas: null },
       edit: null, editP: null, editE: null, draft: null, ui: {}, toast: null, sent: false,
@@ -418,13 +418,13 @@ p { margin: 0; }
   function demo() {
     const s = base();
     Object.assign(s, { screen: 'panel', onbDone: true, demo: true, clock: 10 * 60 + 5 });
-    s.account = { nombre: 'Jorge Pérez', correo: 'jorge@tallerperez.cl', pass: '' };
-    s.empresa = { razon: 'Taller Pérez SpA', fantasia: 'Taller Pérez', rut: '76.543.210-3', giro: 'Taller de metalmecánica', comuna: 'Puerto Montt', region: 'Los Lagos', direccion: 'Av. Presidente Ibáñez 1450', trabajadores: '9', telefono: '', cargo: 'Dueño', limite: '200000' };
+    s.account = { nombre: 'Jorge Pérez', empresa: 'Taller Pérez', telefono: '+56 9 1234 5678' };
+    s.empresa = { razon: 'Taller Pérez SpA', fantasia: 'Taller Pérez', rut: '76.543.210-3', giro: 'Taller de metalmecánica', comuna: 'Puerto Montt', region: 'Los Lagos', direccion: 'Av. Presidente Ibáñez 1450', trabajadores: '9', cargo: 'Dueño', limite: '200000' };
     s.people = [
-      { id: 'owner', nombre: 'Jorge Pérez', cargo: 'Dueño', contacto: 'jorge@tallerperez.cl', reemplazo: '', disponible: true, owner: true },
-      { id: 'p1', nombre: 'Carla Muñoz', cargo: 'Asistente administrativa', contacto: 'carla@tallerperez.cl', reemplazo: 'p2', disponible: true },
-      { id: 'p2', nombre: 'Luis Rojas', cargo: 'Encargado de bodega', contacto: '+56 9 8765 4321', reemplazo: 'p1', disponible: true },
-      { id: 'p3', nombre: 'Pedro Soto', cargo: 'Jefe de taller', contacto: 'pedro@tallerperez.cl', reemplazo: 'p2', disponible: true },
+      { id: 'owner', nombre: 'Jorge Pérez', cargo: 'Dueño', correo: 'jorge@tallerperez.cl', whatsapp: '+56 9 1234 5678', reemplazo: '', disponible: true, owner: true },
+      { id: 'p1', nombre: 'Carla Muñoz', cargo: 'Asistente administrativa', correo: 'carla@tallerperez.cl', whatsapp: '+56 9 7654 3210', reemplazo: 'p2', disponible: true },
+      { id: 'p2', nombre: 'Luis Rojas', cargo: 'Encargado de bodega', correo: '', whatsapp: '+56 9 8765 4321', reemplazo: 'p1', disponible: true },
+      { id: 'p3', nombre: 'Pedro Soto', cargo: 'Jefe de taller', correo: 'pedro@tallerperez.cl', whatsapp: '', reemplazo: 'p2', disponible: true },
     ];
     s.nextP = 4;
     const PAUTA = {
@@ -470,17 +470,17 @@ p { margin: 0; }
   /* ---------- datos para autocompletar en la prueba ---------- */
   function fillExample() {
     if (S.screen === 'auth') {
-      if (S.authTab === 'registro') S.auth = { nombre: 'Jorge Pérez', correo: 'jorge@tallerperez.cl', pass: 'taller2026', pass2: 'taller2026', terminos: true };
-      else Object.assign(S.auth, { correo: 'jorge@tallerperez.cl', pass: 'taller2026' });
+      if (S.authTab === 'registro') S.auth = { nombre: 'Jorge Pérez', empresa: 'Taller Pérez', telefono: '+56 9 1234 5678' };
+      else Object.assign(S.auth, { telefono: '+56 9 1234 5678' });
     } else if (S.screen === 'onb' && S.onb === 1) {
-      Object.assign(S.empresa, { razon: 'Taller Pérez SpA', fantasia: 'Taller Pérez', rut: '76.543.210-3', giro: 'Taller de metalmecánica', comuna: 'Puerto Montt', region: 'Los Lagos', trabajadores: '9', cargo: 'Dueño' });
+      Object.assign(S.empresa, { razon: 'Taller Pérez SpA', fantasia: S.empresa.fantasia || 'Taller Pérez', rut: '76.543.210-3', giro: 'Taller de metalmecánica', comuna: 'Puerto Montt', region: 'Los Lagos', trabajadores: '9', cargo: 'Dueño' });
     } else if (S.screen === 'onb' && S.onb === 2) {
       S.people = S.people.filter(p => p.owner);
       const a = newPid(), b = newPid(), c = newPid();
       S.people.push(
-        { id: a, nombre: 'Carla Muñoz', cargo: 'Asistente administrativa', contacto: 'carla@tallerperez.cl', reemplazo: b, disponible: true },
-        { id: b, nombre: 'Luis Rojas', cargo: 'Encargado de bodega', contacto: '+56 9 8765 4321', reemplazo: a, disponible: true },
-        { id: c, nombre: 'Pedro Soto', cargo: 'Jefe de taller', contacto: 'pedro@tallerperez.cl', reemplazo: b, disponible: true });
+        { id: a, nombre: 'Carla Muñoz', cargo: 'Asistente administrativa', correo: 'carla@tallerperez.cl', whatsapp: '+56 9 7654 3210', reemplazo: b, disponible: true },
+        { id: b, nombre: 'Luis Rojas', cargo: 'Encargado de bodega', correo: '', whatsapp: '+56 9 8765 4321', reemplazo: a, disponible: true },
+        { id: c, nombre: 'Pedro Soto', cargo: 'Jefe de taller', correo: 'pedro@tallerperez.cl', whatsapp: '', reemplazo: b, disponible: true });
     } else if (S.screen === 'onb' && S.onb === 3) {
       S.empresa.limite = '200000';
       const ppl = S.people.filter(p => !p.owner);
@@ -505,20 +505,18 @@ p { margin: 0; }
   function valReg() {
     const f = S.auth, e = {};
     if (blank(f.nombre)) e['auth.nombre'] = 'Escribe tu nombre y apellido.';
-    if (blank(f.correo)) e['auth.correo'] = 'Escribe tu correo.'; else if (!isEmail(f.correo)) e['auth.correo'] = 'Revisa el correo: debe tener @ y un dominio, como nombre@empresa.cl.';
-    if ((f.pass || '').length < 8) e['auth.pass'] = 'La contraseña debe tener al menos 8 caracteres.';
-    if (!f.pass2) e['auth.pass2'] = 'Repite la contraseña.'; else if (f.pass2 !== f.pass) e['auth.pass2'] = 'Las contraseñas no coinciden.';
-    if (!f.terminos) e['auth.terminos'] = 'Acepta los términos para crear la cuenta.';
+    if (blank(f.empresa)) e['auth.empresa'] = 'Escribe el nombre de tu empresa.';
+    if (blank(f.telefono)) e['auth.telefono'] = 'Escribe tu número de teléfono.'; else if (!isPhone(f.telefono)) e['auth.telefono'] = 'Revisa el número: debe tener al menos 8 dígitos, como +56 9 1234 5678.';
     return e;
   }
   function valLogin() {
     const f = S.auth, e = {};
-    if (blank(f.correo)) e['auth.correo'] = 'Escribe tu correo.'; else if (!isEmail(f.correo)) e['auth.correo'] = 'Revisa el correo: debe tener @ y un dominio.';
-    if (blank(f.pass)) e['auth.pass'] = 'Escribe tu contraseña.';
+    if (blank(f.telefono)) e['auth.telefono'] = 'Escribe tu número de teléfono.'; else if (!isPhone(f.telefono)) e['auth.telefono'] = 'Revisa el número: debe tener al menos 8 dígitos.';
     return e;
   }
   function valEmpresa(pre, withLimit) {
     const o = getPath(pre), e = {};
+    if (blank(o.fantasia)) e[pre + '.fantasia'] = 'Escribe el nombre de la empresa.';
     if (blank(o.razon)) e[pre + '.razon'] = 'Escribe la razón social.';
     if (blank(o.rut)) e[pre + '.rut'] = 'Escribe el RUT de la empresa.'; else if (!rutOk(o.rut)) e[pre + '.rut'] = 'El RUT no es válido. Revisa los números y el dígito verificador.';
     if (blank(o.giro)) e[pre + '.giro'] = 'Cuéntanos a qué se dedica la empresa.';
@@ -526,7 +524,6 @@ p { margin: 0; }
     const n = Number(String(o.trabajadores).trim());
     if (blank(o.trabajadores)) e[pre + '.trabajadores'] = 'Indica cuántas personas trabajan en la empresa.'; else if (!Number.isInteger(n) || n < 1) e[pre + '.trabajadores'] = 'Debe ser un número entero mayor que 0.';
     if (blank(o.cargo)) e[pre + '.cargo'] = 'Indica tu cargo.';
-    if (!blank(o.telefono) && !isPhone(o.telefono)) e[pre + '.telefono'] = 'Revisa el teléfono: debe tener al menos 8 dígitos.';
     if (withLimit) Object.assign(e, valLimit(pre));
     return e;
   }
@@ -541,7 +538,9 @@ p { margin: 0; }
     const p = getPath(pre), e = {};
     if (blank(p.nombre)) e[pre + '.nombre'] = 'Escribe el nombre.';
     if (blank(p.cargo)) e[pre + '.cargo'] = 'Escribe el cargo o rol.';
-    if (blank(p.contacto)) e[pre + '.contacto'] = 'Agrega un correo o WhatsApp.'; else if (!isEmail(p.contacto) && !isPhone(p.contacto)) e[pre + '.contacto'] = 'Debe ser un correo válido o un número de al menos 8 dígitos.';
+    if (blank(p.correo) && blank(p.whatsapp)) { e[pre + '.correo'] = 'Agrega un correo o un WhatsApp.'; e[pre + '.whatsapp'] = 'Agrega un WhatsApp o un correo.'; }
+    if (!blank(p.correo) && !isEmail(p.correo)) e[pre + '.correo'] = 'Revisa el correo: debe tener @ y un dominio.';
+    if (!blank(p.whatsapp) && !isPhone(p.whatsapp)) e[pre + '.whatsapp'] = 'Revisa el número: al menos 8 dígitos.';
     return e;
   }
   function valTask(pre) {
@@ -589,10 +588,10 @@ p { margin: 0; }
      Carga desde archivo o desde Excel pegado
   ================================================================== */
   const COLS = {
-    colab: { nombre: ['nombre', 'nombre completo', 'colaborador', 'trabajador', 'persona'], cargo: ['cargo', 'rol', 'puesto', 'funcion'], contacto: ['contacto', 'correo', 'email', 'mail', 'whatsapp', 'telefono', 'celular', 'fono'], reemplazo: ['reemplazo', 'suplente', 'reemplaza'] },
+    colab: { nombre: ['nombre', 'nombre completo', 'colaborador', 'trabajador', 'persona'], cargo: ['cargo', 'rol', 'puesto', 'funcion'], correo: ['correo', 'email', 'mail', 'correo electronico'], whatsapp: ['whatsapp', 'wsp', 'telefono', 'celular', 'fono', 'numero'], contacto: ['contacto'], reemplazo: ['reemplazo', 'suplente', 'reemplaza'] },
     tareas: { nombre: ['tarea', 'nombre', 'nombre tarea'], responsable: ['responsable', 'encargado', 'quien'], pauta: ['pauta', 'puntos', 'checklist', 'revision'], monto: ['monto', 'valor', 'monto aproximado'], frecuencia: ['frecuencia', 'cada cuanto'], siempre: ['siempre revisar', 'siempre', 'critica', 'aprobacion'] },
   };
-  const ORDER = { colab: ['nombre', 'cargo', 'contacto', 'reemplazo'], tareas: ['nombre', 'responsable', 'pauta', 'monto', 'frecuencia', 'siempre'] };
+  const ORDER = { colab: ['nombre', 'cargo', 'correo', 'whatsapp', 'reemplazo'], tareas: ['nombre', 'responsable', 'pauta', 'monto', 'frecuencia', 'siempre'] };
 
   function splitRow(l, d) {
     const out = []; let cur = '', q = false;
@@ -638,7 +637,7 @@ p { margin: 0; }
     if (!objs.length) { S.importMsg[kind] = { c: 'bad', html: `No encontramos filas con datos en <b>${esc(source)}</b>. Revisa que la primera fila tenga los nombres de las columnas.` }; return; }
     let bad = 0;
     if (kind === 'colab') {
-      const added = objs.map(o => { const p = { id: newPid(), nombre: o.nombre || '', cargo: o.cargo || '', contacto: o.contacto || '', reemplazo: '', _rep: o.reemplazo || '', disponible: true }; S.people.push(p); return p; });
+      const added = objs.map(o => { const p = { id: newPid(), nombre: o.nombre || '', cargo: o.cargo || '', correo: o.correo || (isEmail(o.contacto) ? o.contacto : ''), whatsapp: o.whatsapp || (o.contacto && !isEmail(o.contacto) ? o.contacto : ''), reemplazo: '', _rep: o.reemplazo || '', disponible: true }; S.people.push(p); return p; });
       added.forEach(p => { const r = findPerson(p._rep); p.reemplazo = r && r.id !== p.id ? r.id : ''; delete p._rep; });
       added.forEach(p => { const e = valPerson('people.' + p.id); if (Object.keys(e).length) { bad++; Object.assign(S.errs, e); } });
       S.importMsg.colab = { c: bad ? 'warn' : 'ok', html: `Agregamos <b>${added.length} colaborador${added.length > 1 ? 'es' : ''}</b> desde ${esc(source)}.${bad ? ` ${bad} ${bad > 1 ? 'tienen' : 'tiene'} datos faltantes, marcados en rojo.` : ' Revísalos abajo.'}` };
@@ -712,7 +711,7 @@ p { margin: 0; }
     const v = getPath(path) ?? '';
     const err = S.errs[path];
     const id = 'f_' + path.replace(/[^a-zA-Z0-9]/g, '_');
-    const mark = o.req ? ' <span class="req" aria-hidden="true">*</span>' : ' <span class="opt">(opcional)</span>';
+    const mark = o.req ? ' <span class="req" aria-hidden="true">*</span>' : o.one ? ' <span class="opt">(uno de los dos)</span>' : ' <span class="opt">(opcional)</span>';
     const a = `id="${id}" data-f="${path}"${o.req ? ' aria-required="true"' : ''}${err ? ' aria-invalid="true"' : ''}${o.ph ? ` placeholder="${esc(o.ph)}"` : ''}${o.im ? ` inputmode="${o.im}"` : ''}${o.ac ? ` autocomplete="${o.ac}"` : ''}${o.re ? ' data-re="1"' : ''}`;
     let ctrl;
     if (o.area) ctrl = `<textarea ${a}>${esc(v)}</textarea>`;
@@ -724,7 +723,7 @@ p { margin: 0; }
 
   function uploader(kind) {
     const info = kind === 'colab'
-      ? { t: '¿Prefieres subir un archivo con tu equipo?', cols: 'nombre · cargo · contacto (correo o WhatsApp) · reemplazo (opcional)', ex: 'nombre;cargo;contacto;reemplazo\nCarla Muñoz;Asistente administrativa;carla@tallerperez.cl;Luis Rojas\nLuis Rojas;Encargado de bodega;+56 9 8765 4321;Carla Muñoz' }
+      ? { t: '¿Prefieres subir un archivo con tu equipo?', cols: 'nombre · cargo · correo · whatsapp (al menos uno de los dos) · reemplazo (opcional)', ex: 'nombre;cargo;correo;whatsapp;reemplazo\nCarla Muñoz;Asistente administrativa;carla@tallerperez.cl;+56 9 7654 3210;Luis Rojas\nLuis Rojas;Encargado de bodega;;+56 9 8765 4321;Carla Muñoz' }
       : { t: '¿Prefieres subir un archivo con tus tareas?', cols: 'tarea · responsable · pauta (puntos separados por ;) · monto · frecuencia · siempre revisar (sí/no)', ex: 'tarea,responsable,pauta,monto,frecuencia,siempre revisar\nPago a proveedores,Carla Muñoz,"Factura registrada;Monto coincide con la OC",350000,Semanal,no\nCierre de caja,Luis Rojas,"Caja cuadrada;Foto del comprobante",0,Diaria,no' };
     const msg = S.importMsg[kind];
     return `<div class="upload">
@@ -746,18 +745,20 @@ p { margin: 0; }
   function personFields(pre, p) {
     const others = S.people.filter(x => x.id !== p.id);
     return `${F(pre + '.nombre', 'Nombre y apellido', { req: true, ph: 'Ej: Carla Muñoz', ac: 'off' })}
-      <div class="grid2">${F(pre + '.cargo', 'Cargo o rol', { req: true, ph: 'Ej: Bodega' })}${F(pre + '.contacto', 'Correo o WhatsApp', { req: true, ph: 'correo o +56 9…' })}</div>
+      ${F(pre + '.cargo', 'Cargo o rol', { req: true, ph: 'Ej: Encargado de bodega' })}
+      <div class="grid2">${F(pre + '.correo', 'Correo', { one: true, type: 'email', ph: 'nombre@empresa.cl' })}${F(pre + '.whatsapp', 'WhatsApp', { one: true, im: 'tel', ph: '+56 9 1234 5678' })}</div>
+      <p class="formnote">Completa al menos uno: correo o WhatsApp.</p>
       ${F(pre + '.reemplazo', 'Quién la reemplaza si no está', { opts: [['', 'Sin reemplazo'], ...others.map(x => [x.id, x.nombre || 'Colaborador sin nombre'])] })}`;
   }
 
   function empresaFields(pre, withLimit) {
-    return `${F(pre + '.razon', 'Razón social', { req: true, ph: 'Ej: Comercial Los Aromos SpA' })}
-      ${F(pre + '.fantasia', 'Nombre de fantasía', { ph: 'Cómo la conocen tus clientes' })}
+    return `${F(pre + '.fantasia', 'Nombre de la empresa', { req: true, ph: 'Cómo la conocen tus clientes' })}
+      ${F(pre + '.razon', 'Razón social', { req: true, ph: 'Ej: Comercial Los Aromos SpA' })}
       <div class="grid2">${F(pre + '.rut', 'RUT empresa', { req: true, ph: '76.123.456-7' })}${F(pre + '.trabajadores', 'N° de trabajadores', { req: true, im: 'numeric', ph: 'Ej: 9' })}</div>
       ${F(pre + '.giro', 'Giro o rubro', { req: true, ph: 'A qué se dedica tu empresa' })}
       <div class="grid2">${F(pre + '.comuna', 'Comuna', { req: true, ph: 'Ej: Puerto Montt' })}${F(pre + '.region', 'Región', { ph: 'Ej: Los Lagos' })}</div>
       ${F(pre + '.direccion', 'Dirección', { ph: 'Calle y número' })}
-      <div class="grid2">${F(pre + '.telefono', 'Teléfono', { im: 'tel', ph: '+56 9…' })}${F(pre + '.cargo', 'Tu cargo', { req: true, ph: 'Ej: Dueña, administrador' })}</div>
+      ${F(pre + '.cargo', 'Tu cargo', { req: true, ph: 'Ej: Dueña, administrador' })}
       ${withLimit ? limitField(pre) : ''}`;
   }
   function limitField(pre) {
@@ -825,15 +826,12 @@ p { margin: 0; }
       ${errSummary()}
       <form class="sec" data-submit="${reg ? 'registro' : 'login'}" novalidate>
         ${reg ? F('auth.nombre', 'Nombre y apellido', { req: true, ac: 'name', ph: 'Ej: Jorge Pérez' }) : ''}
-        ${F('auth.correo', 'Correo', { req: true, type: 'email', ac: 'email', ph: 'nombre@empresa.cl' })}
-        ${F('auth.pass', 'Contraseña', { req: true, type: 'password', ac: reg ? 'new-password' : 'current-password', hint: reg ? 'Mínimo 8 caracteres.' : '' })}
-        ${reg ? F('auth.pass2', 'Repite la contraseña', { req: true, type: 'password', ac: 'new-password' }) : ''}
-        ${reg ? `<div class="field${S.errs['auth.terminos'] ? ' invalid' : ''}"><label class="checkline"><input type="checkbox" id="f_terminos" data-f="auth.terminos"${S.auth.terminos ? ' checked' : ''}><span>Acepto los términos de uso y la política de privacidad&nbsp;<span class="req">*</span></span></label>${S.errs['auth.terminos'] ? `<span class="err">${esc(S.errs['auth.terminos'])}</span>` : ''}</div>` : ''}
+        ${reg ? F('auth.empresa', 'Nombre de la empresa', { req: true, ac: 'organization', ph: 'Ej: Taller Pérez' }) : ''}
+        ${F('auth.telefono', 'Número de teléfono', { req: true, type: 'tel', im: 'tel', ac: 'tel', ph: '+56 9 1234 5678', hint: reg ? 'Lo usarás para entrar a tu cuenta.' : '' })}
         <p class="formnote"><span class="req">*</span> Obligatorio</p>
         <button class="btn primary" type="submit">${reg ? 'Crear cuenta' : 'Iniciar sesión'}</button>
-        ${reg ? '' : '<button class="linkbtn" type="button" data-act="forgot" style="align-self:center">¿Olvidaste tu contraseña?</button>'}
       </form>
-      ${reg ? '' : `<p class="small muted">En este prototipo, un correo que no se registró aquí entra a la cuenta de ejemplo (Taller Pérez, 13 tareas).</p>`}`;
+      ${reg ? '' : `<p class="small muted">En este prototipo, un número que no se registró aquí entra a la cuenta de ejemplo (Taller Pérez, 13 tareas).</p>`}`;
   }
 
   /* ---------- 2. Configuración en 3 fases ---------- */
@@ -957,8 +955,6 @@ p { margin: 0; }
       ${section('Esperan tu aprobación', 'sobre tu límite o críticas', ap, l => l.map(t => taskCard(t, true)).join(''))}
       ${section('Devueltas al equipo', 'no pasaron la pauta', dv, l => `<div class="list">${l.map(t => lrow(t, `${nameOf(t.responsable)} · ${t.motivo}`)).join('')}</div>`)}
       ${section('Por hacer', 'en manos del equipo', pe, l => `<div class="list">${l.map(t => lrow(t)).join('')}</div>`)}
-      <div class="cta"><h3>¿Lo probamos con una tarea real de tu empresa?</h3><p>Nos compartes una tarea y su pauta. La dejamos funcionando con tu equipo.</p>
-        <button class="btn" data-act="go" data-to="probar">Quiero probarlo</button></div>
       ${section('Cerradas', `${solas} sin pasar por ti`, cl, l => `<div class="list">${l.map(t => lrow(t)).join('')}</div>`)}`;
   }
 
@@ -1029,7 +1025,7 @@ p { margin: 0; }
         const inc = !p.owner && Object.keys(valPerson('people.' + p.id)).length > 0;
         return `<div class="card${inc ? ' bad' : ''}"><div class="person"><div class="avatar${p.disponible ? '' : ' off'}">${initials(p.nombre)}</div>
           <div class="sec" style="gap:8px">
-            <div class="task-top"><div><b>${esc(p.nombre || 'Sin nombre')}</b><div class="small muted">${esc(p.cargo || 'Sin cargo')}${p.contacto ? ' · ' + esc(p.contacto) : ''}</div></div>
+            <div class="task-top"><div><b>${esc(p.nombre || 'Sin nombre')}</b><div class="small muted">${esc(p.cargo || 'Sin cargo')}</div>${p.correo ? `<div class="small muted">Correo: ${esc(p.correo)}</div>` : ''}${p.whatsapp ? `<div class="small muted">WhatsApp: ${esc(p.whatsapp)}</div>` : ''}</div>
               ${p.owner ? '<span class="pill idle">Aprueba</span>' : `<span class="pill ${open ? 'gray' : 'ok'}">${open} abierta${open === 1 ? '' : 's'}</span>`}</div>
             ${inc ? '<span class="flag">Faltan datos obligatorios</span>' : ''}
             ${p.owner ? `<div class="small muted">Recibe lo que supera ${fmt(limite())} y lo marcado como crítico.</div>` : `
@@ -1054,7 +1050,7 @@ p { margin: 0; }
     return `${errSummary()}<div class="sec">${empresaFields('editE', true)}</div>
       <p class="formnote"><span class="req">*</span> Obligatorio</p>
       <button class="btn primary" data-act="save-empresa">Guardar cambios</button>
-      <div class="card"><div class="task-top"><div><b>${esc(S.account?.nombre || '')}</b><div class="small muted">${esc(S.account?.correo || '')}</div></div></div>
+      <div class="card"><div class="task-top"><div><b>${esc(S.account?.nombre || '')}</b><div class="small muted">${esc(S.account?.empresa || '')} · ${esc(S.account?.telefono || '')}</div></div></div>
         <button class="btn" data-act="logout">Cerrar sesión</button></div>`;
   }
 
@@ -1255,18 +1251,18 @@ p { margin: 0; }
       case 'filter': S.filter = d.f; S.prev = []; return go('tareas', null, false);
       case 'ui': S.ui[d.k] = d.v || null; return render();
       case 'authtab': S.authTab = d.to; S.errs = {}; return render();
-      case 'forgot': return toast('En el prototipo no se recupera la contraseña.');
 
       case 'onb-prev': S.onb--; S.errs = {}; return render(true);
       case 'onb-next': {
         const e = valOnb(S.onb);
         if (Object.keys(e).length) return failWith(e);
         S.errs = {};
+        if (S.onb === 1 && owner()) owner().cargo = S.empresa.cargo.trim();
         if (S.onb < 3) { S.onb++; return render(true); }
         S.onbDone = true; S.prev = []; S.viewer = 'owner';
         go('panel', null, false); return toast('Listo. Este es tu panel.');
       }
-      case 'add-person-inline': S.people.push({ id: newPid(), nombre: '', cargo: '', contacto: '', reemplazo: '', disponible: true }); render();
+      case 'add-person-inline': S.people.push({ id: newPid(), nombre: '', cargo: '', correo: '', whatsapp: '', reemplazo: '', disponible: true }); render();
         requestAnimationFrame(() => { const c = app.querySelectorAll('.card'); c[c.length - 1]?.scrollIntoView({ block: 'center' }); c[c.length - 1]?.querySelector('input')?.focus({ preventScroll: true }); }); return;
       case 'del-person': {
         const p = person(d.id); if (!p) return;
@@ -1276,7 +1272,7 @@ p { margin: 0; }
         Object.keys(S.errs).forEach(k => { if (k.startsWith('people.' + d.id)) delete S.errs[k]; });
         toast(`${p.nombre || 'Colaborador'} quitado`); return render();
       }
-      case 'new-person': S.editP = { id: null, isNew: true, nombre: '', cargo: '', contacto: '', reemplazo: '', disponible: true }; return go('persona');
+      case 'new-person': S.editP = { id: null, isNew: true, nombre: '', cargo: '', correo: '', whatsapp: '', reemplazo: '', disponible: true }; return go('persona');
       case 'edit-person': S.editP = clone(person(d.id)); return go('persona');
       case 'save-person': {
         const e = valPerson('editP'); if (Object.keys(e).length) return failWith(e);
@@ -1337,7 +1333,7 @@ p { margin: 0; }
         const e = valEmpresa('editE', true); if (Object.keys(e).length) return failWith(e);
         S.empresa = clone(S.editE); owner().cargo = S.empresa.cargo; toast('Datos de la empresa guardados'); return render();
       }
-      case 'logout': S.screen = 'auth'; S.authTab = 'login'; S.auth = { nombre: '', correo: S.account?.correo || '', pass: '', pass2: '', terminos: false }; S.prev = []; S.viewer = 'owner'; S.errs = {}; return render(true);
+      case 'logout': S.screen = 'auth'; S.authTab = 'login'; S.auth = { nombre: '', empresa: '', telefono: S.account?.telefono || '' }; S.prev = []; S.viewer = 'owner'; S.errs = {}; return render(true);
 
       case 'start': { const t = task(d.id); if (!t) return; startDraft(t); return go('hacer', t.id); }
       case 'chk': S.draft.vals[d.i] = !S.draft.vals[d.i]; return render();
@@ -1470,16 +1466,18 @@ p { margin: 0; }
     e.preventDefault();
     if (kind === 'registro') {
       const er = valReg(); if (Object.keys(er).length) return failWith(er);
-      S.account = { nombre: S.auth.nombre.trim(), correo: S.auth.correo.trim(), pass: S.auth.pass };
-      S.people = [{ id: 'owner', nombre: S.account.nombre, cargo: '', contacto: S.account.correo, reemplazo: '', disponible: true, owner: true }];
+      S.account = { nombre: S.auth.nombre.trim(), empresa: S.auth.empresa.trim(), telefono: S.auth.telefono.trim() };
+      S.empresa.fantasia = S.account.empresa;
+      S.people = [{ id: 'owner', nombre: S.account.nombre, cargo: '', correo: '', whatsapp: S.account.telefono, reemplazo: '', disponible: true, owner: true }];
+      S.pf.wsp = S.account.telefono;
       S.viewer = 'owner'; S.onb = 1; S.errs = {}; S.prev = [];
       S.pf.nombre = S.account.nombre;
       go('onb', null, false); return toast('Cuenta creada. Ahora, los datos de tu empresa.');
     }
     if (kind === 'login') {
       const er = valLogin(); if (Object.keys(er).length) return failWith(er);
-      if (S.account && norm(S.account.correo) === norm(S.auth.correo)) {
-        if (S.account.pass !== S.auth.pass) return failWith({ 'auth.pass': 'La contraseña no coincide con la de esta cuenta.' }, 'No pudimos entrar');
+      const digits = x => String(x || '').replace(/\D/g, '').slice(-8);
+      if (S.account && digits(S.account.telefono) === digits(S.auth.telefono)) {
         S.errs = {}; S.prev = [];
         go(S.onbDone ? 'panel' : 'onb', null, false); return toast(`Hola de nuevo, ${S.account.nombre.split(' ')[0]}`);
       }

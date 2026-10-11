@@ -6,7 +6,7 @@ Prototipo de la app (MVP tipo Mago de Oz) construido a partir del Informe Parcia
 - `TheBackOffice-prototipo.html`: versión para descargar y abrir con doble clic en cualquier navegador.
 
 Flujo:
-1. Crear cuenta o iniciar sesión (un correo no registrado entra a la cuenta de ejemplo con 13 tareas).
+1. Crear cuenta con nombre, empresa y teléfono, o iniciar sesión con el teléfono (un número no registrado entra a la cuenta de ejemplo con 13 tareas).
 2. Configuración en 3 fases con campos obligatorios y opcionales: datos de la empresa, colaboradores y panel de tareas. No se avanza sin completar los obligatorios.
 3. Colaboradores y tareas se pueden cargar a mano, subiendo un Excel o CSV, o pegando filas desde Excel. Otros formatos (PDF, Word, foto) quedan para carga asistida.
 4. Panel editable: el cliente crea, edita, repite y quita tareas, cada una con su propia pauta (marcar, foto o cantidad esperada).
