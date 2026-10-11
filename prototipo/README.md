@@ -2,15 +2,15 @@
 
 Prototipo de la app (MVP tipo Mago de Oz) construido a partir del Informe Parcial C, Unidad 2.
 
-Archivo: `the-back-office.html` (se publica como Artifact de claude.ai).
+- `the-back-office.html`: versión que se publica como Artifact de claude.ai.
+- `TheBackOffice-prototipo.html`: versión para descargar y abrir con doble clic en cualquier navegador.
 
-Pantallas:
-- Bienvenida y configuración en 3 pasos: empresa, roles y reemplazos, límite y tareas críticas.
-- Panel del dueño: cerradas solas, esperan aprobación, devueltas al equipo.
-- Detalle de tarea: pauta, diferencias pedido/recibido, historial, aprobar, devolver o reasignar.
-- Equipo: disponibilidad diaria con reasignación automática al reemplazo.
-- Pautas y límite: editar los puntos de cada pauta y qué pasa siempre por el dueño.
-- Vista del equipo (celular): completar la pauta, adjuntar foto, registrar cantidades y ver el resultado.
-- Petición: compartir una tarea real para probar el servicio.
+Flujo:
+1. Crear cuenta o iniciar sesión (un correo no registrado entra a la cuenta de ejemplo con 13 tareas).
+2. Configuración en 3 fases con campos obligatorios y opcionales: datos de la empresa, colaboradores y panel de tareas. No se avanza sin completar los obligatorios.
+3. Colaboradores y tareas se pueden cargar a mano, subiendo un Excel o CSV, o pegando filas desde Excel. Otros formatos (PDF, Word, foto) quedan para carga asistida.
+4. Panel editable: el cliente crea, edita, repite y quita tareas, cada una con su propia pauta (marcar, foto o cantidad esperada).
+5. El panel muestra todas las tareas, agrupadas por estado.
+6. Vista del colaborador en el celular, aprobación del dueño y petición para probar con una tarea real.
 
 Empresa, personas, montos y proveedores son ejemplos inventados.
