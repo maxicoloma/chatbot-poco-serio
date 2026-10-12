@@ -9,52 +9,37 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Figtree:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
 <style>
-/* Layout: guion de prueba a la izquierda + celular a la derecha en escritorio; en el teléfono, solo la app a pantalla completa. */
+/* Layout: página web. Barra superior con navegación; contenido centrado en columnas en computador y apilado en el celular, con pestañas abajo. Tema claro único: fondo blanco y texto negro. */
 :root {
-  --bg: #E6E9F0;
-  --paper: #F6F7FA;
+  --bg: #FFFFFF;
+  --paper: #F4F5F7;
   --card: #FFFFFF;
-  --ink: #131A2C;
-  --muted: #5A6377;
-  --line: #DADFE8;
+  --ink: #0B0B0C;
+  --muted: #474D5C;
+  --line: #D9DCE3;
   --accent: #2741C2;
   --accent-ink: #FFFFFF;
-  --accent-soft: #E3E8FB;
-  --head: #17203A;
-  --head-ink: #F3F5FB;
-  --head-muted: #A9B3CC;
-  --frame: #1B2233;
+  --accent-soft: #E6EAFB;
+  --head: #FFFFFF;
+  --head-ink: #0B0B0C;
+  --head-muted: #474D5C;
   --ok: #1D7549;
   --ok-soft: #E0F2E8;
   --warn: #9A5600;
   --warn-soft: #FCEFD9;
   --bad: #B0261E;
   --bad-soft: #FBE5E2;
-  --shadow: 0 30px 60px -30px rgba(19, 26, 44, .45);
+  --shadow: 0 18px 40px -24px rgba(11, 11, 12, .35);
+  --gut: 16px;
+  --maxw: 1160px;
   --f-display: "Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, sans-serif;
   --f-body: "Figtree", "Segoe UI", system-ui, -apple-system, sans-serif;
   --f-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg: #0A0D15; --paper: #10151F; --card: #171E2D; --ink: #E7EBF3; --muted: #98A2B6; --line: #263048;
-    --accent: #8FA3FF; --accent-ink: #0B0F1A; --accent-soft: #1D2650; --head: #0B101C; --head-ink: #E7EBF3; --head-muted: #8A95AD;
-    --frame: #2A3247; --ok: #62D39B; --ok-soft: #12301F; --warn: #F1B661; --warn-soft: #33260F; --bad: #FF8F85; --bad-soft: #3A1714;
-    --shadow: 0 30px 60px -30px rgba(0, 0, 0, .8);
-    color-scheme: dark;
-  }
-}
-:root[data-theme="dark"] {
-  --bg: #0A0D15; --paper: #10151F; --card: #171E2D; --ink: #E7EBF3; --muted: #98A2B6; --line: #263048;
-  --accent: #8FA3FF; --accent-ink: #0B0F1A; --accent-soft: #1D2650; --head: #0B101C; --head-ink: #E7EBF3; --head-muted: #8A95AD;
-  --frame: #2A3247; --ok: #62D39B; --ok-soft: #12301F; --warn: #F1B661; --warn-soft: #33260F; --bad: #FF8F85; --bad-soft: #3A1714;
-  --shadow: 0 30px 60px -30px rgba(0, 0, 0, .8);
-  color-scheme: dark;
+  color-scheme: light;
 }
 
 * { box-sizing: border-box; }
-html { height: 100%; }
-body { min-height: 100%; background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 15px; line-height: 1.45; }
+body { min-height: 100vh; background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 15px; line-height: 1.45; }
 button, input, select, textarea { font: inherit; color: inherit; }
 button { cursor: pointer; }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
@@ -62,11 +47,10 @@ h1, h2, h3 { text-wrap: balance; margin: 0; }
 p { margin: 0; }
 .mono { font-family: var(--f-mono); font-variant-numeric: tabular-nums; }
 
-/* ---------- escenario ---------- */
-.stage { display: flex; justify-content: center; align-items: center; gap: 56px; min-height: 100vh; padding-block: 32px; padding-inline: 24px; }
-.guide { width: 340px; flex: none; display: flex; flex-direction: column; gap: 20px; }
+/* ---------- guía de prueba (panel lateral) ---------- */
+.guide { display: flex; flex-direction: column; gap: 20px; }
 .guide .brandline { font-family: var(--f-mono); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
-.guide h1 { font-family: var(--f-display); font-weight: 800; font-size: 34px; line-height: 1.02; letter-spacing: -.02em; }
+.guide h1 { font-family: var(--f-display); font-weight: 800; font-size: 30px; line-height: 1.02; letter-spacing: -.02em; }
 .guide .lede { color: var(--muted); font-size: 15px; }
 .steps { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; counter-reset: s; }
 .steps li { counter-increment: s; display: grid; grid-template-columns: 28px 1fr auto; gap: 10px; align-items: center; padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--card); }
@@ -78,33 +62,53 @@ p { margin: 0; }
 .guide .note { font-size: 12.5px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 14px; }
 .guide .row { display: flex; gap: 8px; flex-wrap: wrap; }
 
-.device { width: 392px; height: min(830px, calc(100vh - 64px)); min-height: 640px; border-radius: 46px; border: 11px solid var(--frame); background: var(--paper); overflow: hidden; box-shadow: var(--shadow); flex: none; position: relative; }
-.app { height: 100%; display: flex; flex-direction: column; position: relative; }
-
+/* ---------- estructura de la página ---------- */
+.app { min-height: 100vh; display: flex; flex-direction: column; }
+.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 10; background: var(--head); color: var(--head-ink); border-bottom: 1px solid var(--line); }
+.top-in { max-width: var(--maxw); margin: 0 auto; padding: 12px var(--gut); display: flex; align-items: center; gap: 16px; }
+.logo { display: flex; align-items: center; gap: 8px; white-space: nowrap; font-family: var(--f-mono); font-size: 12px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--head-ink); }
+.logo b { width: 20px; height: 20px; border-radius: 6px; border: 2px solid var(--accent); display: inline-block; position: relative; }
+.logo b::after { content: ""; position: absolute; left: 4px; top: 1px; width: 5px; height: 10px; border-right: 2px solid var(--accent); border-bottom: 2px solid var(--accent); transform: rotate(40deg); }
+.topnav { display: none; gap: 4px; }
+.topnav .tab { flex-direction: row; padding: 8px 12px; border-radius: 10px; font-size: 14px; gap: 8px; color: var(--head-ink); }
+.topnav .tab svg { width: 18px; height: 18px; }
+.topnav .tab[aria-current="page"] { background: var(--accent-soft); color: var(--accent); }
+.topnav .tab .dot { position: static; }
+.viewas { margin-left: auto; display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--head-muted); white-space: nowrap; }
+.viewas select { background: var(--card); border: 1px solid var(--line); border-radius: 999px; padding: 6px 12px; color: var(--head-ink); font-size: 13px; font-weight: 600; max-width: 170px; }
+.guidebtn { background: var(--card); border: 1px solid var(--line); color: var(--head-ink); border-radius: 999px; font-size: 13px; padding: 6px 12px; font-weight: 600; }
+.guidebtn .dl { display: none; }
+.main { flex: 1; width: 100%; max-width: var(--maxw); margin: 0 auto; padding: 20px var(--gut) calc(96px + env(safe-area-inset-bottom, 0px)); display: flex; flex-direction: column; gap: 18px; }
+.main.narrow { max-width: 800px; }
+.main.noTabs { padding-bottom: 40px; }
+.pagehead { display: flex; flex-direction: column; gap: 4px; }
+.pagehead h2 { font-family: var(--f-display); font-weight: 800; font-size: 26px; letter-spacing: -.01em; line-height: 1.1; }
+.pagehead .sub { font-size: 14px; color: var(--muted); }
+.cols, .cardgrid { display: flex; flex-direction: column; gap: 18px; }
+.col { display: flex; flex-direction: column; gap: 18px; min-width: 0; }
 @media (max-width: 899px) {
-  html, body { height: 100%; }
-  .stage { display: block; min-height: 0; height: 100%; padding: 0; }
-  .guide { display: none; }
-  .device { width: 100%; height: 100%; min-height: 0; border: 0; border-radius: 0; box-shadow: none; }
+  .viewas label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .viewas select { max-width: 124px; padding: 5px 10px; font-size: 12.5px; }
+  .guidebtn { padding: 5px 10px; font-size: 12.5px; }
+  .logo { font-size: 10.5px; }
+  .top-in { gap: 10px; }
 }
+@media (min-width: 900px) {
+  :root { --gut: 32px; }
+  .topnav { display: flex; margin-left: 8px; }
+  .tabbar { display: none !important; }
+  .guidebtn .dl { display: inline; }
+  .main { padding-top: 32px; padding-bottom: 64px; gap: 24px; }
+  .pagehead h2 { font-size: 34px; }
+  .pagehead .sub { font-size: 15px; }
+  .cols { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 28px; align-items: start; }
+  .cols.side { grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr); }
+  .cardgrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; align-items: start; }
+  .filterwrap { margin-inline: 0 !important; }
+  .filters { padding-inline: 2px !important; scroll-padding-inline: 0 !important; }
+}
+@media (min-width: 1180px) { .cardgrid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 
-/* ---------- cabecera ---------- */
-.top { background: var(--head); color: var(--head-ink); padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 10px; flex: none; }
-.device .top { padding-top: 22px; }
-.top-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
-.logo { display: flex; align-items: center; gap: 8px; white-space: nowrap; font-family: var(--f-mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--head-muted); }
-.logo b { width: 18px; height: 18px; border-radius: 5px; border: 2px solid var(--head-ink); display: inline-block; position: relative; }
-.logo b::after { content: ""; position: absolute; left: 3px; top: 1px; width: 5px; height: 9px; border-right: 2px solid var(--head-ink); border-bottom: 2px solid var(--head-ink); transform: rotate(40deg); }
-.top h2 { font-family: var(--f-display); font-weight: 800; font-size: 22px; letter-spacing: -.01em; line-height: 1.1; }
-.top .sub { font-size: 12.5px; color: var(--head-muted); }
-.viewas { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--head-muted); white-space: nowrap; }
-.viewas select { background: transparent; border: 1px solid color-mix(in srgb, var(--head-ink) 30%, transparent); border-radius: 999px; padding: 4px 10px; color: var(--head-ink); font-size: 12.5px; font-weight: 600; max-width: 132px; }
-.viewas select option { color: #131A2C; background: #FFFFFF; }
-.guidebtn { display: none; background: transparent; border: 1px solid color-mix(in srgb, var(--head-ink) 30%, transparent); color: var(--head-ink); border-radius: 999px; font-size: 12px; padding: 4px 10px; font-weight: 600; }
-@media (max-width: 899px) { .guidebtn { display: inline-block; } .viewas label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); } .viewas select { max-width: 124px; } .logo { font-size: 10.5px; } }
-
-/* ---------- cuerpo ---------- */
-.scroll { flex: 1; overflow-y: auto; overscroll-behavior: contain; padding: 16px 16px 24px; display: flex; flex-direction: column; gap: 18px; }
 .sec { display: flex; flex-direction: column; gap: 10px; }
 .sec-h { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
 .sec-h h3 { font-size: 13px; letter-spacing: .08em; text-transform: uppercase; font-weight: 700; }
@@ -168,10 +172,6 @@ p { margin: 0; }
 .banner.info { background: var(--accent-soft); color: var(--ink); }
 .banner b { font-weight: 700; }
 
-.cta { background: var(--head); color: var(--head-ink); border-radius: 18px; padding: 16px; display: flex; flex-direction: column; gap: 10px; }
-.cta h3 { font-family: var(--f-display); font-weight: 800; font-size: 20px; line-height: 1.1; }
-.cta p { color: var(--head-muted); font-size: 13.5px; }
-.cta .btn { background: var(--head-ink); color: var(--head); border-color: var(--head-ink); }
 
 .chips { display: flex; gap: 6px; flex-wrap: wrap; }
 .chip { border: 1px solid var(--line); background: var(--card); border-radius: 999px; padding: 5px 11px; font-size: 12.5px; font-weight: 600; color: var(--muted); }
@@ -183,8 +183,8 @@ p { margin: 0; }
 .filters.dragging { cursor: grabbing; scroll-snap-type: none; user-select: none; }
 .filters .chip { flex: none; white-space: nowrap; scroll-snap-align: start; }
 .filterwrap::before, .filterwrap::after { content: ""; position: absolute; top: 0; bottom: 8px; width: 40px; pointer-events: none; opacity: 0; transition: opacity .15s; z-index: 1; }
-.filterwrap::before { left: 0; background: linear-gradient(90deg, var(--paper) 30%, transparent); }
-.filterwrap::after { right: 0; background: linear-gradient(270deg, var(--paper) 30%, transparent); }
+.filterwrap::before { left: 0; background: linear-gradient(90deg, var(--bg) 30%, transparent); }
+.filterwrap::after { right: 0; background: linear-gradient(270deg, var(--bg) 30%, transparent); }
 .filterwrap.can-left::before, .filterwrap.can-right::after { opacity: 1; }
 .fbtn { position: absolute; top: 2px; z-index: 2; width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--line); background: var(--card); color: var(--ink); font-weight: 800; font-size: 15px; line-height: 1; display: none; place-items: center; padding: 0; box-shadow: 0 2px 6px rgba(19, 26, 44, .12); }
 .fbtn.l { left: 6px; } .fbtn.r { right: 6px; }
@@ -274,19 +274,20 @@ p { margin: 0; }
 .howto li::before { content: counter(h); width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--accent); color: var(--accent); display: grid; place-items: center; font-weight: 700; font-family: var(--f-mono); font-size: 13px; }
 .howto b { display: block; }
 
-.tabbar { display: grid; border-top: 1px solid var(--line); background: var(--card); flex: none; padding-bottom: env(safe-area-inset-bottom, 0px); }
-.device .tabbar { padding-bottom: 14px; }
+.tabbar { display: grid; position: fixed; left: 0; right: 0; bottom: 0; z-index: 10; border-top: 1px solid var(--line); background: var(--card); padding-bottom: env(safe-area-inset-bottom, 0px); }
 .tab { background: none; border: 0; padding: 10px 4px 8px; display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 11.5px; font-weight: 600; color: var(--muted); position: relative; }
 .tab svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .tab[aria-current="page"] { color: var(--accent); }
 .tab .dot { position: absolute; top: 6px; left: calc(50% + 8px); min-width: 16px; height: 16px; padding: 0 4px; border-radius: 999px; background: var(--warn); color: var(--card); font-size: 10px; font-weight: 800; display: grid; place-items: center; }
 
-.toast { pointer-events: none; position: absolute; left: 16px; right: 16px; bottom: 84px; background: var(--ink); color: var(--paper); border-radius: 12px; padding: 11px 14px; font-size: 13.5px; font-weight: 600; box-shadow: var(--shadow); z-index: 5; }
+.toast { pointer-events: none; position: fixed; left: 16px; right: 16px; bottom: calc(84px + env(safe-area-inset-bottom, 0px)); background: var(--ink); color: var(--card); border-radius: 12px; padding: 11px 14px; font-size: 13.5px; font-weight: 600; box-shadow: var(--shadow); z-index: 5; }
 .toast.in { animation: up .25s ease-out both; }
+@media (min-width: 900px) { .toast { left: auto; right: 28px; bottom: 28px; width: 380px; } }
 @keyframes up { from { transform: translateY(10px); opacity: 0; } to { transform: none; opacity: 1; } }
 
-.sheet { position: fixed; inset: 0; background: rgba(10, 13, 21, .55); z-index: 20; display: flex; align-items: flex-end; }
-.sheet-in { background: var(--paper); width: 100%; max-height: 88%; overflow-y: auto; border-radius: 20px 20px 0 0; padding: 20px 16px calc(24px + env(safe-area-inset-bottom, 0px)); display: flex; flex-direction: column; gap: 16px; }
+.sheet { position: fixed; inset: 0; background: rgba(11, 11, 12, .45); z-index: 20; display: flex; align-items: flex-end; }
+@media (min-width: 900px) { .sheet { align-items: stretch; justify-content: flex-end; } .sheet .sheet-in { width: 440px; max-height: none; height: 100%; border-radius: 0; padding: 28px; } }
+.sheet-in { background: var(--bg); width: 100%; max-height: 88%; overflow-y: auto; border-radius: 20px 20px 0 0; padding: 20px 16px calc(24px + env(safe-area-inset-bottom, 0px)); display: flex; flex-direction: column; gap: 16px; }
 .sheet-in .guide { display: flex; width: 100%; }
 
 .empty { text-align: center; color: var(--muted); font-size: 13.5px; padding: 18px 8px; }
@@ -313,7 +314,8 @@ p { margin: 0; }
 
 /* ---------- acceso ---------- */
 .authhero { display: flex; flex-direction: column; gap: 8px; padding-top: 4px; }
-.authhero h1 { font-family: var(--f-display); font-weight: 800; font-size: 30px; line-height: 1.02; letter-spacing: -.02em; }
+.authhero h1 { font-family: var(--f-display); font-weight: 800; font-size: clamp(30px, 4vw, 52px); line-height: 1.02; letter-spacing: -.02em; }
+@media (min-width: 900px) { .authgrid { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr) !important; gap: 64px !important; align-items: center !important; padding-block: 32px; } .authform { background: var(--card); border: 1px solid var(--line); border-radius: 20px; padding: 28px; box-shadow: var(--shadow); } .authhero .muted { font-size: 17px; } }
 .seg { display: grid; grid-template-columns: 1fr 1fr; background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 3px; }
 .seg button { border: 0; background: transparent; border-radius: 9px; padding: 9px 6px; font-weight: 700; font-size: 14px; color: var(--muted); }
 .seg button[aria-selected="true"] { background: var(--accent); color: var(--accent-ink); }
@@ -335,6 +337,7 @@ p { margin: 0; }
 .point-n { font-family: var(--f-mono); font-size: 11px; color: var(--muted); }
 .kpis.four { grid-template-columns: repeat(4, 1fr); }
 .kpis.four .n { font-size: 26px; }
+@media (min-width: 900px) { .kpis.four .n { font-size: 38px; } .kpi { padding: 16px 18px 18px; } .kpi .l { font-size: 13.5px; } }
 .kpi.idle .n { color: var(--accent); }
 .totalline { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
 .totalline b { font-family: var(--f-display); font-size: 18px; font-weight: 800; }
@@ -345,10 +348,7 @@ p { margin: 0; }
 </head>
 <body>
 
-<div class="stage">
-  <aside class="guide" id="guide" aria-label="Guion de la prueba de uso"></aside>
-  <div class="device"><div class="app" id="app"></div></div>
-</div>
+<div class="app" id="app"></div>
 <div class="sheet" id="sheet" hidden><div class="sheet-in" id="sheet-in"></div></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" async></script>
@@ -364,6 +364,7 @@ p { margin: 0; }
   const blank = s => !String(s ?? '').trim();
   const money = s => { const d = String(s ?? '').replace(/[^\d]/g, ''); return d === '' ? null : Number(d); };
   const isEmail = s => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(String(s || '').trim());
+  const isMailLoose = s => /^[^\s@]+@[^\s@]*$/.test(String(s || '').trim());
   const isPhone = s => String(s || '').replace(/\D/g, '').length >= 8 && !/[a-z@]/i.test(String(s));
   const norm = s => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim();
   const clone = o => JSON.parse(JSON.stringify(o));
@@ -431,8 +432,8 @@ p { margin: 0; }
     s.people = [
       { id: 'owner', nombre: 'Jorge Pérez', cargo: 'Dueño', correo: 'jorge@tallerperez.cl', whatsapp: '+56 9 1234 5678', reemplazo: '', disponible: true, owner: true },
       { id: 'p1', nombre: 'Carla Muñoz', cargo: 'Asistente administrativa', correo: 'carla@tallerperez.cl', whatsapp: '+56 9 7654 3210', reemplazo: 'p2', disponible: true },
-      { id: 'p2', nombre: 'Luis Rojas', cargo: 'Encargado de bodega', correo: '', whatsapp: '+56 9 8765 4321', reemplazo: 'p1', disponible: true },
-      { id: 'p3', nombre: 'Pedro Soto', cargo: 'Jefe de taller', correo: 'pedro@tallerperez.cl', whatsapp: '', reemplazo: 'p2', disponible: true },
+      { id: 'p2', nombre: 'Luis Rojas', cargo: 'Encargado de bodega', correo: 'luis@tallerperez.cl', whatsapp: '+56 9 8765 4321', reemplazo: 'p1', disponible: true },
+      { id: 'p3', nombre: 'Pedro Soto', cargo: 'Jefe de taller', correo: 'pedro@tallerperez.cl', whatsapp: '+56 9 6543 2109', reemplazo: 'p2', disponible: true },
     ];
     s.nextP = 4;
     const PAUTA = {
@@ -487,8 +488,8 @@ p { margin: 0; }
       const a = newPid(), b = newPid(), c = newPid();
       S.people.push(
         { id: a, nombre: 'Carla Muñoz', cargo: 'Asistente administrativa', correo: 'carla@tallerperez.cl', whatsapp: '+56 9 7654 3210', reemplazo: b, disponible: true },
-        { id: b, nombre: 'Luis Rojas', cargo: 'Encargado de bodega', correo: '', whatsapp: '+56 9 8765 4321', reemplazo: a, disponible: true },
-        { id: c, nombre: 'Pedro Soto', cargo: 'Jefe de taller', correo: 'pedro@tallerperez.cl', whatsapp: '', reemplazo: b, disponible: true });
+        { id: b, nombre: 'Luis Rojas', cargo: 'Encargado de bodega', correo: 'luis@tallerperez.cl', whatsapp: '+56 9 8765 4321', reemplazo: a, disponible: true },
+        { id: c, nombre: 'Pedro Soto', cargo: 'Jefe de taller', correo: 'pedro@tallerperez.cl', whatsapp: '+56 9 6543 2109', reemplazo: b, disponible: true });
     } else if (S.screen === 'onb' && S.onb === 3) {
       S.empresa.limite = '200000';
       const ppl = S.people.filter(p => !p.owner);
@@ -546,9 +547,8 @@ p { margin: 0; }
     const p = getPath(pre), e = {};
     if (blank(p.nombre)) e[pre + '.nombre'] = 'Escribe el nombre.';
     if (blank(p.cargo)) e[pre + '.cargo'] = 'Escribe el cargo o rol.';
-    if (blank(p.correo) && blank(p.whatsapp)) { e[pre + '.correo'] = 'Agrega un correo o un WhatsApp.'; e[pre + '.whatsapp'] = 'Agrega un WhatsApp o un correo.'; }
-    if (!blank(p.correo) && !isEmail(p.correo)) e[pre + '.correo'] = 'Revisa el correo: debe tener @ y un dominio.';
-    if (!blank(p.whatsapp) && !isPhone(p.whatsapp)) e[pre + '.whatsapp'] = 'Revisa el número: al menos 8 dígitos.';
+    if (blank(p.correo)) e[pre + '.correo'] = 'Escribe el correo.'; else if (!isMailLoose(p.correo)) e[pre + '.correo'] = 'Revisa el correo: debe tener @ (ej: carla@tallerperez) y no llevar espacios.';
+    if (blank(p.whatsapp)) e[pre + '.whatsapp'] = 'Escribe el número de WhatsApp.'; else if (!isPhone(p.whatsapp)) e[pre + '.whatsapp'] = 'Revisa el número: al menos 8 dígitos.';
     return e;
   }
   function valTask(pre) {
@@ -645,7 +645,7 @@ p { margin: 0; }
     if (!objs.length) { S.importMsg[kind] = { c: 'bad', html: `No encontramos filas con datos en <b>${esc(source)}</b>. Revisa que la primera fila tenga los nombres de las columnas.` }; return; }
     let bad = 0;
     if (kind === 'colab') {
-      const added = objs.map(o => { const p = { id: newPid(), nombre: o.nombre || '', cargo: o.cargo || '', correo: o.correo || (isEmail(o.contacto) ? o.contacto : ''), whatsapp: o.whatsapp || (o.contacto && !isEmail(o.contacto) ? o.contacto : ''), reemplazo: '', _rep: o.reemplazo || '', disponible: true }; S.people.push(p); return p; });
+      const added = objs.map(o => { const p = { id: newPid(), nombre: o.nombre || '', cargo: o.cargo || '', correo: o.correo || (String(o.contacto || '').includes('@') ? o.contacto : ''), whatsapp: o.whatsapp || (o.contacto && !String(o.contacto).includes('@') ? o.contacto : ''), reemplazo: '', _rep: o.reemplazo || '', disponible: true }; S.people.push(p); return p; });
       added.forEach(p => { const r = findPerson(p._rep); p.reemplazo = r && r.id !== p.id ? r.id : ''; delete p._rep; });
       added.forEach(p => { const e = valPerson('people.' + p.id); if (Object.keys(e).length) { bad++; Object.assign(S.errs, e); } });
       S.importMsg.colab = { c: bad ? 'warn' : 'ok', html: `Agregamos <b>${added.length} colaborador${added.length > 1 ? 'es' : ''}</b> desde ${esc(source)}.${bad ? ` ${bad} ${bad > 1 ? 'tienen' : 'tiene'} datos faltantes, marcados en rojo.` : ' Revísalos abajo.'}` };
@@ -688,7 +688,6 @@ p { margin: 0; }
      Navegación
   ================================================================== */
   const app = document.getElementById('app');
-  const guideEl = document.getElementById('guide');
   const sheet = document.getElementById('sheet');
   const sheetIn = document.getElementById('sheet-in');
   let stampNext = false;
@@ -719,7 +718,7 @@ p { margin: 0; }
     const v = getPath(path) ?? '';
     const err = S.errs[path];
     const id = 'f_' + path.replace(/[^a-zA-Z0-9]/g, '_');
-    const mark = o.req ? ' <span class="req" aria-hidden="true">*</span>' : o.one ? ' <span class="opt">(uno de los dos)</span>' : ' <span class="opt">(opcional)</span>';
+    const mark = o.req ? ' <span class="req" aria-hidden="true">*</span>' : ' <span class="opt">(opcional)</span>';
     const a = `id="${id}" data-f="${path}"${o.req ? ' aria-required="true"' : ''}${err ? ' aria-invalid="true"' : ''}${o.ph ? ` placeholder="${esc(o.ph)}"` : ''}${o.im ? ` inputmode="${o.im}"` : ''}${o.ac ? ` autocomplete="${o.ac}"` : ''}${o.re ? ' data-re="1"' : ''}`;
     let ctrl;
     if (o.area) ctrl = `<textarea ${a}>${esc(v)}</textarea>`;
@@ -731,7 +730,7 @@ p { margin: 0; }
 
   function uploader(kind) {
     const info = kind === 'colab'
-      ? { t: '¿Prefieres subir un archivo con tu equipo?', cols: 'nombre · cargo · correo · whatsapp (al menos uno de los dos) · reemplazo (opcional)', ex: 'nombre;cargo;correo;whatsapp;reemplazo\nCarla Muñoz;Asistente administrativa;carla@tallerperez.cl;+56 9 7654 3210;Luis Rojas\nLuis Rojas;Encargado de bodega;;+56 9 8765 4321;Carla Muñoz' }
+      ? { t: '¿Prefieres subir un archivo con tu equipo?', cols: 'nombre · cargo · correo · whatsapp · reemplazo (opcional)', ex: 'nombre;cargo;correo;whatsapp;reemplazo\nCarla Muñoz;Asistente administrativa;carla@tallerperez;+56 9 7654 3210;Luis Rojas\nLuis Rojas;Encargado de bodega;luis@tallerperez;+56 9 8765 4321;Carla Muñoz' }
       : { t: '¿Prefieres subir un archivo con tus tareas?', cols: 'tarea · responsable · pauta (puntos separados por ;) · monto · frecuencia · siempre revisar (sí/no)', ex: 'tarea,responsable,pauta,monto,frecuencia,siempre revisar\nPago a proveedores,Carla Muñoz,"Factura registrada;Monto coincide con la OC",350000,Semanal,no\nCierre de caja,Luis Rojas,"Caja cuadrada;Foto del comprobante",0,Diaria,no' };
     const msg = S.importMsg[kind];
     return `<div class="upload">
@@ -754,8 +753,8 @@ p { margin: 0; }
     const others = S.people.filter(x => x.id !== p.id);
     return `${F(pre + '.nombre', 'Nombre y apellido', { req: true, ph: 'Ej: Carla Muñoz', ac: 'off' })}
       ${F(pre + '.cargo', 'Cargo o rol', { req: true, ph: 'Ej: Encargado de bodega' })}
-      <div class="grid2">${F(pre + '.correo', 'Correo', { one: true, type: 'email', ph: 'nombre@empresa.cl' })}${F(pre + '.whatsapp', 'WhatsApp', { one: true, im: 'tel', ph: '+56 9 1234 5678' })}</div>
-      <p class="formnote">Completa al menos uno: correo o WhatsApp.</p>
+      ${F(pre + '.correo', 'Correo', { req: true, im: 'email', ac: 'off', ph: 'Ej: carla@tallerperez', hint: 'No necesitas escribir el dominio (.cl o .com).' })}
+      ${F(pre + '.whatsapp', 'WhatsApp', { req: true, im: 'tel', ph: '+56 9 1234 5678' })}
       ${F(pre + '.reemplazo', 'Quién la reemplaza si no está', { opts: [['', 'Sin reemplazo'], ...others.map(x => [x.id, x.nombre || 'Colaborador sin nombre'])] })}`;
   }
 
@@ -792,7 +791,7 @@ p { margin: 0; }
   };
   const count = e => S.tasks.filter(t => t.estado === e).length;
 
-  function header() {
+  function titles() {
     const me = person(S.viewer);
     const T = {
       auth: ['Bienvenido', 'Crea tu cuenta o inicia sesión'],
@@ -806,31 +805,45 @@ p { margin: 0; }
       mis: [`Hola, ${me ? me.nombre.split(' ')[0] : ''}`, me ? me.cargo : ''], hechas: ['Enviadas', me ? me.nombre : ''],
       hacer: ['Revisar contra la pauta', S.param || ''], resultado: ['Resultado', S.param || ''],
     };
-    const [title, sub] = T[S.screen] || ['The Back Office', ''];
+    return T[S.screen] || ['The Back Office', ''];
+  }
+  function header() {
     const inApp = S.onbDone && !['auth', 'onb'].includes(S.screen) && S.people.length > 1;
     const opts = S.people.map(p => `<option value="${p.id}"${p.id === S.viewer ? ' selected' : ''}>${esc((p.owner ? 'Dueño · ' : 'Equipo · ') + (p.nombre || 'Sin nombre').split(' ')[0])}</option>`).join('');
-    return `<header class="top"><div class="top-row">
+    const nav = navTabs();
+    return `<header class="top"><div class="top-in">
         <span class="logo"><b aria-hidden="true"></b>The Back Office</span>
-        <span class="viewas">${inApp ? `<label for="viewas">Ver como</label><select id="viewas" data-change="viewas">${opts}</select>` : ''}<button class="guidebtn" data-act="guide">Guía</button></span>
-      </div><div><h2>${esc(title)}</h2>${sub ? `<div class="sub">${esc(sub)}</div>` : ''}</div></header>`;
+        ${nav ? `<nav class="topnav" aria-label="Secciones">${nav}</nav>` : ''}
+        <span class="viewas">${inApp ? `<label for="viewas">Ver como</label><select id="viewas" data-change="viewas">${opts}</select>` : ''}<button class="guidebtn" data-act="guide">Guía<span class="dl"> de prueba</span></button></span>
+      </div></header>`;
+  }
+  function pagehead() {
+    const [title, sub] = titles();
+    return `<div class="pagehead"><h2>${esc(title)}</h2>${sub ? `<div class="sub">${esc(sub)}</div>` : ''}</div>`;
   }
 
-  function tabbar() {
-    if (!S.onbDone || ['auth', 'onb'].includes(S.screen)) return '';
-    const tabs = isOwner()
+  function tabList() {
+    if (!S.onbDone || ['auth', 'onb'].includes(S.screen)) return null;
+    return isOwner()
       ? [['panel', 'Inicio', count('aprobacion')], ['tareas', 'Tareas', 0], ['equipo', 'Equipo', 0], ['empresa', 'Empresa', 0]]
       : [['mis', 'Mis tareas', myOpen().length], ['hechas', 'Enviadas', 0]];
+  }
+  function navTabs() {
+    const tabs = tabList(); if (!tabs) return '';
     const active = { tarea: 'tareas', editor: 'tareas', persona: 'equipo', probar: 'panel', hacer: 'mis', resultado: 'mis' }[S.screen] || S.screen;
-    return `<nav class="tabbar" style="grid-template-columns:repeat(${tabs.length},1fr)" aria-label="Secciones">
-      ${tabs.map(([id, l, n]) => `<button class="tab" data-act="tab" data-to="${id}"${active === id ? ' aria-current="page"' : ''}>${ICONS[id]}${l}${n ? `<span class="dot">${n}</span>` : ''}</button>`).join('')}</nav>`;
+    return tabs.map(([id, l, n]) => `<button class="tab" data-act="tab" data-to="${id}"${active === id ? ' aria-current="page"' : ''}>${ICONS[id]}${l}${n ? `<span class="dot">${n}</span>` : ''}</button>`).join('');
+  }
+  function tabbar() {
+    const tabs = tabList(); if (!tabs) return '';
+    return `<nav class="tabbar" style="grid-template-columns:repeat(${tabs.length},1fr)" aria-label="Secciones">${navTabs()}</nav>`;
   }
 
   /* ---------- 1. Acceso ---------- */
   function vAuth() {
     const reg = S.authTab === 'registro';
-    return `<div class="authhero"><h1>Las tareas simples se cierran solas. Tú revisas solo lo importante.</h1>
+    return `<div class="cols authgrid"><div class="authhero"><h1>Las tareas simples se cierran solas. Tú revisas solo lo importante.</h1>
         <p class="muted">Tu equipo cierra cada tarea contra una pauta. A ti solo te llega lo que supera tu límite o no calza.</p></div>
-      <div class="seg" role="tablist"><button role="tab" aria-selected="${reg}" data-act="authtab" data-to="registro">Crear cuenta</button><button role="tab" aria-selected="${!reg}" data-act="authtab" data-to="login">Iniciar sesión</button></div>
+      <div class="col authform"><div class="seg" role="tablist"><button role="tab" aria-selected="${reg}" data-act="authtab" data-to="registro">Crear cuenta</button><button role="tab" aria-selected="${!reg}" data-act="authtab" data-to="login">Iniciar sesión</button></div>
       ${errSummary()}
       <form class="sec" data-submit="${reg ? 'registro' : 'login'}" novalidate>
         ${reg ? F('auth.nombre', 'Nombre y apellido', { req: true, ac: 'name', ph: 'Ej: Jorge Pérez' }) : ''}
@@ -839,7 +852,7 @@ p { margin: 0; }
         <p class="formnote"><span class="req">*</span> Obligatorio</p>
         <button class="btn primary" type="submit">${reg ? 'Crear cuenta' : 'Iniciar sesión'}</button>
       </form>
-      ${reg ? '' : `<p class="small muted">En este prototipo, un número que no se registró aquí entra a la cuenta de ejemplo (Taller Pérez, 13 tareas).</p>`}`;
+      ${reg ? '' : `<p class="small muted">En este prototipo, un número que no se registró aquí entra a la cuenta de ejemplo (Taller Pérez, 13 tareas).</p>`}</div></div>`;
   }
 
   /* ---------- 2. Configuración en 3 fases ---------- */
@@ -960,23 +973,27 @@ p { margin: 0; }
       ${pend ? `<div class="banner info"><span><b>Carga asistida en curso.</b> Estamos cargando ${[S.asistida.colab, S.asistida.tareas].filter(Boolean).map(esc).join(' y ')}. Mientras, puedes agregar tareas a mano.</span></div>` : ''}
       ${absentBanner()}
       ${!S.tasks.length ? `<div class="list"><div class="empty">Tu panel está vacío. Agrega tu primera tarea con «+ Nueva tarea».</div></div>` : ''}
+      <div class="cols"><div class="col">
       ${section('Esperan tu aprobación', 'sobre tu límite o críticas', ap, l => l.map(t => taskCard(t, true)).join(''))}
       ${section('Devueltas al equipo', 'no pasaron la pauta', dv, l => `<div class="list">${l.map(t => lrow(t, `${nameOf(t.responsable)} · ${t.motivo}`)).join('')}</div>`)}
+      </div><div class="col">
       ${section('Por hacer', 'en manos del equipo', pe, l => `<div class="list">${l.map(t => lrow(t)).join('')}</div>`)}
-      ${section('Cerradas', `${solas} sin pasar por ti`, cl, l => `<div class="list">${l.map(t => lrow(t)).join('')}</div>`)}`;
+      ${section('Cerradas', `${solas} sin pasar por ti`, cl, l => `<div class="list">${l.map(t => lrow(t)).join('')}</div>`)}
+      </div></div>`;
   }
 
   function vTareas() {
     const f = S.filter;
     const filters = [['todas', 'Todas'], ['pendiente', 'Por hacer'], ['aprobacion', 'Esperan aprobación'], ['devuelta', 'Devueltas'], ['cerrada', 'Cerradas']];
     const list = S.tasks.filter(t => f === 'todas' || t.estado === f);
-    return `<div class="totalline"><b>${S.tasks.length} tarea${S.tasks.length === 1 ? '' : 's'}</b><button class="btn sm primary" style="flex:none" data-act="new-task">+ Nueva tarea</button></div>
+    return `<div class="cols side"><div class="col">
+      <div class="totalline"><b>${S.tasks.length} tarea${S.tasks.length === 1 ? '' : 's'}</b><button class="btn sm primary" style="flex:none" data-act="new-task">+ Nueva tarea</button></div>
       <div class="filterwrap"><button class="fbtn l" data-act="fscroll" data-d="-1" aria-label="Ver filtros anteriores" tabindex="-1">‹</button>
         <div class="filters" id="filters" role="group" aria-label="Filtrar tareas (desliza para ver más)">${filters.map(([k, l]) => `<button class="chip" data-act="filter" data-f="${k}" aria-pressed="${f === k}">${l} <span class="mono">${k === 'todas' ? S.tasks.length : count(k)}</span></button>`).join('')}</div>
         <button class="fbtn r" data-act="fscroll" data-d="1" aria-label="Ver más filtros" tabindex="-1">›</button></div>
       ${list.length ? `<div class="list">${list.map(t => lrow(t)).join('')}</div>` : '<div class="list"><div class="empty">No hay tareas en este estado.</div></div>'}
       <p class="small muted">Toca una tarea para editarla, cambiar su pauta o quitarla.</p>
-      ${uploader('tareas')}`;
+      </div><div class="col">${uploader('tareas')}</div></div>`;
   }
 
   function checksBlock(t) {
@@ -1020,15 +1037,15 @@ p { margin: 0; }
         ${t.descripcion ? `<p class="small muted">${esc(t.descripcion)}</p>` : ''}</div>
       ${taskIncomplete(t) ? '<div class="reason bad">A esta tarea le faltan datos obligatorios. Toca «Editar tarea» para completarla.</div>' : ''}
       ${t.motivo ? `<div class="reason ${e.c}">${esc(t.motivo)}</div>` : ''}
-      ${decide}${manage}${checksBlock(t)}
-      <div class="card"><div class="sec-h"><h3>Historial</h3><small>quién hizo qué</small></div>
-        <ul class="timeline">${t.historial.map(h => `<li><span class="h">${h.h}</span><span>${h.txt}</span></li>`).join('')}</ul></div>`;
+      <div class="cols side"><div class="col">${decide}${manage}${checksBlock(t)}</div>
+      <div class="col"><div class="card"><div class="sec-h"><h3>Historial</h3><small>quién hizo qué</small></div>
+        <ul class="timeline">${t.historial.map(h => `<li><span class="h">${h.h}</span><span>${h.txt}</span></li>`).join('')}</ul></div></div></div>`;
   }
 
   function vEquipo() {
     return `${absentBanner()}
       <div class="totalline"><b>${S.people.length} persona${S.people.length === 1 ? '' : 's'}</b><button class="btn sm primary" style="flex:none" data-act="new-person">+ Agregar colaborador</button></div>
-      ${S.people.map(p => {
+      <div class="cardgrid three">${S.people.map(p => {
         const open = S.tasks.filter(t => t.responsable === p.id && (t.estado === 'pendiente' || t.estado === 'devuelta')).length;
         const inc = !p.owner && Object.keys(valPerson('people.' + p.id)).length > 0;
         return `<div class="card${inc ? ' bad' : ''}"><div class="person"><div class="avatar${p.disponible ? '' : ' off'}">${initials(p.nombre)}</div>
@@ -1041,7 +1058,7 @@ p { margin: 0; }
               <div class="toggle-row"><span>Disponible hoy</span><button class="switch" role="switch" aria-label="${esc(p.nombre)} disponible hoy" aria-checked="${p.disponible}" data-act="disp" data-p="${p.id}"></button></div>
               <div class="btns"><button class="btn sm" data-act="edit-person" data-id="${p.id}">Editar</button><button class="btn sm badb" data-act="del-person" data-id="${p.id}">Quitar</button></div>`}
           </div></div></div>`;
-      }).join('')}
+      }).join('')}</div>
       ${uploader('colab')}`;
   }
 
@@ -1104,9 +1121,9 @@ p { margin: 0; }
     return `${!me.disponible ? `<div class="banner info"><span><b>Hoy estás marcado como no disponible.</b> Tus tareas pasaron a ${esc(me.reemplazo ? first(me.reemplazo) : first(owner().id))}.</span></div>` : ''}
       ${moved.length ? `<div class="banner info"><span><b>${moved.length > 1 ? `Te llegaron ${moved.length} tareas` : 'Te llegó 1 tarea'} de ${esc(first(moved[0].reasignadaDe))}</b>, que no está hoy.</span></div>` : ''}
       ${fix.length ? `<section class="sec"><div class="sec-h"><h3>Para corregir · ${fix.length}</h3><small>no pasaron la pauta</small></div>
-        ${fix.map(t => card(t, 'bad', `<button class="btn primary" data-act="start" data-id="${t.id}">Corregir</button>${t.checks && t.checks.some(c => c.k === 'numero' && !c.ok) ? `<button class="btn" data-act="escalate" data-id="${t.id}">Avisar diferencia</button>` : ''}`)).join('')}</section>` : ''}
+        <div class="cardgrid">${fix.map(t => card(t, 'bad', `<button class="btn primary" data-act="start" data-id="${t.id}">Corregir</button>${t.checks && t.checks.some(c => c.k === 'numero' && !c.ok) ? `<button class="btn" data-act="escalate" data-id="${t.id}">Avisar diferencia</button>` : ''}`)).join('')}</div></section>` : ''}
       <section class="sec"><div class="sec-h"><h3>Por hacer · ${todo.length}</h3></div>
-        ${todo.length ? todo.map(t => card(t, '', `<button class="btn primary" data-act="start" data-id="${t.id}">Empezar</button>`)).join('') : '<div class="list"><div class="empty">No tienes tareas pendientes.</div></div>'}</section>`;
+        ${todo.length ? `<div class="cardgrid">${todo.map(t => card(t, '', `<button class="btn primary" data-act="start" data-id="${t.id}">Empezar</button>`)).join('')}</div>` : '<div class="list"><div class="empty">No tienes tareas pendientes.</div></div>'}</section>`;
   }
 
   function vHechas() {
@@ -1224,15 +1241,15 @@ p { margin: 0; }
   const VIEWS = { auth: vAuth, onb: vOnb, panel: vPanel, tareas: vTareas, tarea: vTarea, editor: vEditor, equipo: vEquipo, persona: vPersona, empresa: vEmpresa, probar: vProbar, mis: vMis, hechas: vHechas, hacer: vHacer, resultado: vResultado };
 
   function render(resetScroll) {
-    const sc = app.querySelector('.scroll');
-    const top = sc && !resetScroll ? sc.scrollTop : 0;
+    const top = resetScroll ? 0 : window.scrollY;
     const active = document.activeElement && document.activeElement.id;
-    app.innerHTML = header() + `<main class="scroll">${(VIEWS[S.screen] || vPanel)()}</main>` + tabbar() + (S.toast ? `<div class="toast${S.toastFresh ? ' in' : ''}" role="status">${esc(S.toast)}</div>` : '');
+    const narrow = ['onb', 'editor', 'persona', 'empresa', 'probar', 'hacer', 'resultado'].includes(S.screen);
+    const tabs = tabbar();
+    app.innerHTML = header() + `<main class="main${narrow ? ' narrow' : ''}${tabs ? '' : ' noTabs'}">${S.screen === 'auth' ? '' : pagehead()}${(VIEWS[S.screen] || vPanel)()}</main>` + tabs + (S.toast ? `<div class="toast${S.toastFresh ? ' in' : ''}" role="status">${esc(S.toast)}</div>` : '');
     S.toastFresh = false;
-    const nsc = app.querySelector('.scroll'); if (nsc) nsc.scrollTop = top;
+    window.scrollTo(0, top);
     if (active && !resetScroll) { const el = document.getElementById(active); if (el && el.tagName !== 'BUTTON' && el.type !== 'file') el.focus({ preventScroll: true }); }
     setupFilters();
-    guideEl.innerHTML = guideHTML();
     if (!sheet.hidden) sheetIn.innerHTML = `<div class="guide">${guideHTML()}</div><button class="btn" data-act="guide-close">Cerrar</button>`;
   }
 
@@ -1367,7 +1384,7 @@ p { margin: 0; }
       }
 
       case 'fscroll': { const el = document.getElementById('filters'); if (el) el.scrollBy({ left: Number(d.d) * el.clientWidth * 0.7, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }); return; }
-      case 'fill': return fillExample();
+      case 'fill': closeSheet(); return fillExample();
       case 'load-demo': closeSheet(); return loadDemo('Entraste a la cuenta de ejemplo: Taller Pérez');
       case 'jump': {
         closeSheet();

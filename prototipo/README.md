@@ -2,6 +2,8 @@
 
 Prototipo de la app (MVP tipo Mago de Oz) construido a partir del Informe Parcial C, Unidad 2.
 
+En computador se ve como página web (barra superior con navegación y contenido en columnas); en el celular, como app con pestañas abajo. La guía de prueba se abre con el botón «Guía de prueba».
+
 - `the-back-office.html`: versión que se publica como Artifact de claude.ai.
 - `TheBackOffice-prototipo.html`: versión para descargar y abrir con doble clic en cualquier navegador.
 
